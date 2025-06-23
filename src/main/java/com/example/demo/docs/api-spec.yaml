@@ -5,7 +5,11 @@ info:
   version: 1.0.0
 servers:
   - url: http://localhost:8080
-
+tags:
+  - name: user
+    description: "使用者相關操作"
+  - name: product
+    description: "商品相關操作"
 paths:
   /user/login:
     post:
@@ -335,7 +339,7 @@ components:
         city:
           type: string
           example: "台北市"
-        district:
+        country:
           type: string
           example: "中正區"
         address:

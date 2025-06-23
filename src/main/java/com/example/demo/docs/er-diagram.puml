@@ -1,0 +1,24 @@
+@startuml
+
+skinparam linetype ortho
+
+left to right direction
+
+entity "User" as User {
+    *id: Long
+    ---
+    name: string
+    email: string
+    password: string
+    image: string
+    gender: byte
+    birthday: date
+    phone: string
+    city: string
+    country: string
+    address: string
+    createdAt: datetime
+    lastLoginAt: datetime
+}
+
+@enduml
