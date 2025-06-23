@@ -1,0 +1,411 @@
+openapi: 3.0.0
+info:
+  title: E-Commerce-API Spec
+  description: 電商API功能規劃
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+
+paths:
+  /user/login:
+    post:
+      tags:
+        - user
+      summary: "使用者登入"
+      description: "使用者輸入帳號密碼進行登入"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        '200':
+          description: "登入成功"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example: 
+                status: 200
+                message: "[Login] 登入成功"
+                timestamp: "2025-06-23T14:00:00"
+                data:
+                  email: "user@example.com"
+                  name: "TEST"
+                  token: "Bear xxxxx"
+        '400':
+          description: "登入失敗"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                status: 400
+                message: "[Login] Invalid credentials"
+                timestamp: "2025-06-23T14:00:00"
+                data:
+                  errors:
+                    email: "帳號或密碼錯誤"
+                    password: "帳號或密碼錯誤"
+  /user/register:
+    post:
+      tags:
+        - user
+      summary: "使用者註冊"
+      description: "使用者輸入資料進行註冊"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterRequest"
+      responses:
+        '200':
+          description: "註冊成功"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example: 
+                status: 200
+                message: "[Register] 註冊成功"
+                timestamp: "2025-06-23T14:00:00"
+                data:
+                  email: "user@example.com"
+                  name: "TEST"
+        '400':
+          description: "註冊失敗"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                status: 400
+                message: "[Register] 註冊失敗"
+                timestamp: "2025-06-23T14:00:00"
+                data:
+                  email: "格式不符合"
+                  password: "密碼未輸入"
+        '401': 
+          $ref: "#/components/responses/UnauthorizedError"
+        '403':
+          $ref: "#/components/responses/forbiddenError"
+  /user/me:
+    get:
+      tags:
+        - user
+      summary: "使用者資料查詢"
+      description: "查詢目前使用者資料"
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: "查詢成功"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                status: 200
+                message: "[GetProfile] 取得使用者資料成功"
+                timestamp: "2025-06-23T14:00:00"
+                data:
+                  email: "user@example.com"
+                  name: "TEST"
+        '400':
+          description: "查詢失敗"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                status: 400
+                message: "[GetProfile] 取得使用者資料失敗"
+                timestamp: "2025-06-23T14:00:00"
+                data:
+                  errors:
+                    general: "連線異常請重新登入"
+        '401':
+          $ref: "#/components/responses/UnauthorizedError"
+        '403':
+          $ref: "#/components/responses/forbiddenError"
+    put:
+      tags:
+        - user
+      summary: 使用者資料更新
+      description: 使用者修改資料或照片
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserRequest"
+      responses:
+        '200':
+          description: "資料更新成功"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                status: 200
+                message: "[UpdateProfile] 更新使用者資料成功"
+                timestamp: "2025-06-23T14:00:00"
+                data: null
+        '400':
+          description: "資料更新失敗"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                status: 400
+                message: "[UpdateProfile] 更新使用者資料失敗"
+                timestamp: "2025-06-23T14:00:00"
+                data:
+                  errors:
+                    image: "照片格是錯誤"
+                    birthday: "生日不能大於今日"
+                    address: "地址未輸入"
+        '401':
+          $ref: "#/components/responses/UnauthorizedError"
+        '403':
+          $ref: "#/components/responses/forbiddenError"
+  /user/me/password:
+    patch:
+      tags:
+        - user
+      summary: 使用者修改密碼
+      description: 使用者輸入新的密碼進行修改
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdatePasswordRequest"
+      responses:
+        '200':
+          description: "密碼修改成功"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                status: 200
+                message: "[UpdatePassword] 更新密碼成功"
+                timestamp: "2025-06-23T14:00:00"
+                data: null
+        '400':
+          description: "密碼修改失敗"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                status: 400
+                message: "[UpdatePassword] 更新密碼失敗"
+                timestamp: "2025-06-23T14:00:00"
+                data:
+                  errors:
+                    oldPassword: "舊密碼錯誤"
+                    NewConfirmPassword: "輸入密碼不一致"
+        '401':
+          $ref: "#/components/responses/UnauthorizedError"
+        '403':
+          $ref: "#/components/responses/forbiddenError"
+  /user/verify:
+    get:
+      tags:
+        - user
+      summary: "使用者驗證"
+      description: "驗證使用者是否登入"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: token
+          required: true
+          schema:
+            type: string
+          description: "JWT Token"
+      responses:
+        '200':
+          description: "驗證成功"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                status: 200
+                message: "[Verify] 使用者驗證成功"
+                timestamp: "2025-06-23T14:00:00"
+                data: null
+        '400':
+          description: "驗證失敗"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                status: 400
+                message: "[Verify] 使用者驗證失敗"
+                timestamp: "2025-06-23T14:00:00"
+                data:
+                  errors:
+                    general: "連線異常請重新登入"
+        '401':
+          $ref: "#/components/responses/UnauthorizedError"
+        '403':
+          $ref: "#/components/responses/forbiddenError"
+components:
+  schemas:
+    ApiResponse:
+      type: object
+      properties:
+        status:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: "OK"
+        timestamp:
+          type: string
+          format: date-time
+        data:
+          nullable: true
+          oneOf:
+          - $ref: "#/components/schemas/UserInfo"
+          - $ref: "#/components/schemas/ErrorDetail"
+          - type: string
+    ErrorDetail:
+      type: object
+      properties:
+        errors:
+          type: object
+          additionalProperties:
+            type: string
+          example:
+            email: "信箱格式不符"
+            password: "密碼錯誤"
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          example: Test@gmail.com
+        password:
+          type: string
+          example: Aa123456
+    RegisterRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          example: "Test@gmail.com"
+        password:
+          type: string
+          example: Aa123456
+    UpdateUserRequest:
+      type: object
+      properties:
+        image:
+          type: string
+          example: /upload/defaultAvater.jpg
+        name:
+          type: string
+          example: "Test"
+        gender:
+          type: number
+          example: 1
+        birthday:
+          type: string
+          format: date
+          example: 2025-06-20
+        phone:
+          type: string
+          example: 0912345678
+        city:
+          type: string
+          example: "台北市"
+        district:
+          type: string
+          example: "中正區"
+        address:
+          type: string
+          example: "我家巷口"
+    UpdatePasswordRequest:
+      type: object
+      required:
+        - oldPassword
+        - newPassword
+        - newConfirmPassword
+      properties:
+        oldPassword:
+          type: string
+          example: Aa123456
+        newPassword:
+          type: string
+          example: Bb123456
+        newConfirmPassword:
+          type: string
+          example: Bb123456
+    UserInfo:
+      type: object
+      properties:
+        email:
+          type: string
+          example: Test@gmail.com
+        name:
+          type: string
+          example: "Test"
+        birthday:
+          type: string
+          format: date
+          example: 2025-06-20
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  responses:
+    UnauthorizedError:
+      description: "未授權"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiResponse"
+          example:
+            status: 401
+            message: "[Unauthorized] 使用者未登入或Token無效"
+            timestamp: "2025-06-23T14:00:00"
+            data: null
+    forbiddenError:
+      description: "禁止存取"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiResponse"
+          example:
+            status: 403
+            message: "[Forbidden] 使用者無權限存取此資源"
+            timestamp: "2025-06-23T14:00:00"
+            data: null
+    NotFoundError:
+      description: "找不到資源"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiResponse"
+          example:
+            status: 404
+            message: "[NotFound] 資源不存在"
+            timestamp: "2025-06-23T14:00:00"
+            data: null

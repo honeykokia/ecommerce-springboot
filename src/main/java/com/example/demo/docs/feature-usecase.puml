@@ -1,0 +1,82 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+skinparam usecase {
+  BackgroundColor<<design>> LightPink
+  BorderColor black
+}
+
+actor guest
+actor member
+actor admin
+
+
+package User{
+    usecase "登入" <<design>> as Login
+    usecase "註冊" <<design>> as Register
+    usecase "忘記密碼" <<design>> as ForgetPw
+    usecase "個人資料" <<design>> as Profile
+    usecase "編輯個人資料" <<design>> as EditProfile
+    usecase "修改密碼" <<design>> as ChangePw
+}
+
+package Product{
+    usecase "商品列表" <<design>> as ProductList
+    usecase "產品詳情" <<design>> as ProductDetail
+    usecase "產品分類" <<design>> as ProductCategory
+    usecase "搜尋商品" <<design>> as SearchProduct
+}
+
+package Cart {
+  usecase "加入購物車" <<design>> as AddCart
+  usecase "查看購物車" <<design>> as ViewCart
+  usecase "修改購物車" <<design>> as EditCart
+  usecase "刪除購物車" <<design>> as DeleteCart
+}
+
+package Order{
+    usecase "建立訂單" <<design>> as AddOrder
+    usecase "查看訂單" <<design>> as ViewOrder
+    usecase "訂單詳情" <<design>> as OrderDetail
+}
+
+package AdminPanel{
+    usecase "商品管理" <<design>> as ProductManagement
+    usecase "訂單管理" <<design>> as OrderManagement
+    usecase "會員管理" <<design>> as MemberManagement
+}
+
+package Payment{
+  usecase "啟動付款" <<design>> as InitiatePayment
+  usecase "模擬付款" <<design>> as MockPayment
+  usecase "處理付款結果" <<design>> as PaymentResult
+}
+
+member --> AddCart
+member --> ViewCart
+member --> EditCart
+member --> DeleteCart
+member --> Profile
+member --> EditProfile
+member --> ChangePw
+member --> AddOrder
+member --> ViewOrder
+member --> OrderDetail
+member --> InitiatePayment
+member --> MockPayment
+member --> PaymentResult
+
+guest --> Login
+guest --> Register
+guest --> ForgetPw
+guest --> ProductList
+guest --> ProductDetail
+guest --> ProductCategory
+guest --> SearchProduct
+
+admin --> ProductManagement
+admin --> OrderManagement
+admin --> MemberManagement
+
+
+@enduml
