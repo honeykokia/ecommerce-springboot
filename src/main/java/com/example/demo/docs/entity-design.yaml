@@ -1,0 +1,18 @@
+user:
+  id: string <<PK>>
+  name: string
+  email: string
+  password: string
+  image: string
+  gender: byte
+  birthday: date
+  phone: string
+  city: string
+  country: string
+  address: string
+  status: string
+  createdAt: datetime
+  lastLoginAt: datetime
+
+
+
