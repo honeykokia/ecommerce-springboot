@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=https://json-schema.org/draft/2020-12/schema
 openapi: 3.0.0
 info:
   title: E-Commerce-API Spec
@@ -6,15 +7,17 @@ info:
 servers:
   - url: http://localhost:8080
 tags:
-  - name: user
+  - name: users
     description: "使用者相關操作"
-  - name: product
+  - name: products
     description: "商品相關操作"
+  - name: categories
+    description: "商品分類相關操作"
 paths:
-  /user/login:
+  /users/login:
     post:
       tags:
-        - user
+        - users
       summary: "使用者登入"
       description: "使用者輸入帳號密碼進行登入"
       requestBody:
@@ -52,10 +55,10 @@ paths:
                   errors:
                     email: "帳號或密碼錯誤"
                     password: "帳號或密碼錯誤"
-  /user/register:
+  /users/register:
     post:
       tags:
-        - user
+        - users
       summary: "使用者註冊"
       description: "使用者輸入資料進行註冊"
       requestBody:
@@ -76,8 +79,9 @@ paths:
                 message: "[Register] 註冊成功"
                 timestamp: "2025-06-23T14:00:00"
                 data:
-                  email: "user@example.com"
-                  name: "TEST"
+                  email: "Test@gmail.com"
+                  name: "Test"
+                  birthday: "2025-06-20"
         '400':
           description: "註冊失敗"
           content:
@@ -95,10 +99,10 @@ paths:
           $ref: "#/components/responses/UnauthorizedError"
         '403':
           $ref: "#/components/responses/forbiddenError"
-  /user/me:
+  /users/me:
     get:
       tags:
-        - user
+        - users
       summary: "使用者資料查詢"
       description: "查詢目前使用者資料"
       security:
@@ -136,7 +140,7 @@ paths:
           $ref: "#/components/responses/forbiddenError"
     put:
       tags:
-        - user
+        - users
       summary: 使用者資料更新
       description: 使用者修改資料或照片
       security:
@@ -178,10 +182,10 @@ paths:
           $ref: "#/components/responses/UnauthorizedError"
         '403':
           $ref: "#/components/responses/forbiddenError"
-  /user/me/password:
+  /users/me/password:
     patch:
       tags:
-        - user
+        - users
       summary: 使用者修改密碼
       description: 使用者輸入新的密碼進行修改
       security:
@@ -222,16 +226,16 @@ paths:
           $ref: "#/components/responses/UnauthorizedError"
         '403':
           $ref: "#/components/responses/forbiddenError"
-  /user/verify:
+  /users/verify/{token}:
     get:
       tags:
-        - user
+        - users
       summary: "使用者驗證"
       description: "驗證使用者是否登入"
       security:
         - bearerAuth: []
       parameters:
-        - in: query
+        - in: path
           name: token
           required: true
           schema:
@@ -266,6 +270,160 @@ paths:
           $ref: "#/components/responses/UnauthorizedError"
         '403':
           $ref: "#/components/responses/forbiddenError"
+
+  /products/{productId}:
+    get:
+      tags:
+        - products
+      summary: "產品內容"
+      description: "取得產品內容"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          schema:
+            type: integer
+          description: "產品ID"
+      responses:
+        '200':
+          description: "取得產品內容成功"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                status: 200
+                message: "成功"
+                timestamp: "2025-06-23T14:00:00"
+                data:
+                  product:
+                    id: 1
+                    name: "藍芽耳機"
+  /products:
+    get:
+      tags:
+        - products
+      summary: "產品列表"
+      description: "取得產品列表"
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: "取得產品列表成功"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                status: 200
+                message: "[GetProductList] 使用者取得產品列表成功"
+                timestamp: "2025-06-23T14:00:00"
+                data:
+                  products:
+                    - id: 1
+                      name: "藍芽耳機"
+                      price: 2000
+                      discountPrice: 1800
+                      imageUrl: "/upload/defaultProduct.jpg"
+                      category:
+                        id: 1
+                        name: "耳機"
+                      inStock: 20
+                      rating: 4.5
+                      soldCount: 36
+                      shortDescription: "這是最新款的藍芽耳機，目前折價9折熱賣中"
+                      tags: ["熱賣", "新品"]
+                    - id: 2
+                      name: "無線滑鼠"
+                      price: 800
+                      discountPrice: 720
+                      imageUrl: "/upload/defaultProduct2.jpg"
+                      category:
+                        id: 2
+                        name: "滑鼠"
+                      inStock: 50
+                      rating: 4.0
+                      soldCount: 100
+                      shortDescription: "這是最新款的無線滑鼠，目前折價9折熱賣中"
+                      tags: ["熱賣"]
+        '400':
+          description: "取得產品列表失敗"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                status: 400
+                message: "[GetProductList] 使用者取得產品列表失敗"
+                timestamp: "2025-06-23T14:00:00"
+                data:
+                  errors:
+                    general: "連線異常請重新登入"
+        '401':
+          $ref: "#/components/responses/UnauthorizedError"
+        '403':
+          $ref: "#/components/responses/forbiddenError"
+  /categories/{categoryId}/products:
+    get:
+      tags:
+        - categories
+      summary: "分類產品列表"
+      description: "取得特定分類的產品列表"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: categoryId
+          required: true
+          schema:
+            type: integer
+          description: "分類ID"
+      responses:
+        '200':
+          description: "取得分類產品列表成功"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                status: 200
+                message: "[GetCategoryProducts] 取得分類產品列表成功"
+                timestamp: "2025-06-23T14:00:00"
+                data:
+                  products:
+                    - id: 1
+                      name: "藍芽耳機"
+                      price: 2000
+                      discountPrice: 1800
+                      imageUrl: "/upload/defaultProduct.jpg"
+                      category:
+                        id: 1
+                        name: "耳機"
+                      inStock: 20
+                      rating: 4.5
+                      soldCount: 36
+                      shortDescription: "這是最新款的藍芽耳機，目前折價9折熱賣中"
+                      tags: ["熱賣", "新品"]
+        '400':
+          description: "取得分類產品列表失敗"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                status: 400
+                message: "[GetCategoryProducts] 取得分類產品列表失敗"
+                timestamp: "2025-06-23T14:00:00"
+                data:
+                  errors:
+                    general: "連線異常請重新登入"
+        '401':
+          $ref: "#/components/responses/UnauthorizedError"
+        '403':
+          $ref: "#/components/responses/forbiddenError"
+
 components:
   schemas:
     ApiResponse:
@@ -282,10 +440,11 @@ components:
           format: date-time
         data:
           nullable: true
-          oneOf:
-          - $ref: "#/components/schemas/UserInfo"
-          - $ref: "#/components/schemas/ErrorDetail"
-          - type: string
+          type: object
+          # oneOf:
+          # - $ref: "#/components/schemas/UserInfo"
+          # - $ref: "#/components/schemas/ErrorDetail"
+          # - type: string
     ErrorDetail:
       type: object
       properties:
@@ -361,6 +520,27 @@ components:
         newConfirmPassword:
           type: string
           example: Bb123456
+    ProductResponse:
+      type: object
+      properties:
+        product:
+          $ref: "#/components/schemas/ProductInfo"
+    ProductListResponse:
+      type: object
+      properties:
+        products:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProductInfo"
+        total:
+          type: integer
+          example: 100
+        page:
+          type: integer
+          example: 1
+        pageSize:
+          type: integer
+          example: 20
     UserInfo:
       type: object
       properties:
@@ -374,6 +554,52 @@ components:
           type: string
           format: date
           example: 2025-06-20
+    ProductInfo:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "藍芽耳機"
+        price:
+          type: integer
+          example: 2000
+        discountPrice:
+          type: integer
+          example: 1800
+        imageUrl:
+          type: string
+          example: "/upload/defaultProduct.jpg"
+        category:
+          $ref: "#/components/schemas/CategoryInfo"
+        inStock:
+          type: integer
+          example: 20
+        rating:
+          type: number
+          format: double
+          example: 4.5
+        soldCount:
+          type: integer
+          example: 36
+        shortDescription:
+          type: string
+          example: "這是最新款的藍芽耳機，目前折價9折熱賣中"
+        tags:
+          type: array
+          example: ["熱賣","新品"]
+    CategoryInfo:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: 耳機
+        
   securitySchemes:
     bearerAuth:
       type: http
