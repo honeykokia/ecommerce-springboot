@@ -1067,6 +1067,160 @@ paths:
           $ref: "#/components/responses/UnauthorizedError"
         '403':
           $ref: "#/components/responses/forbiddenError"
+
+  /products/{productId}:
+    get:
+      tags:
+        - products
+      summary: "產品內容"
+      description: "取得產品內容"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          schema:
+            type: integer
+          description: "產品ID"
+      responses:
+        '200':
+          description: "取得產品內容成功"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                status: 200
+                message: "成功"
+                timestamp: "2025-06-23T14:00:00"
+                data:
+                  product:
+                    id: 1
+                    name: "藍芽耳機"
+  /products:
+    get:
+      tags:
+        - products
+      summary: "產品列表"
+      description: "取得產品列表"
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: "取得產品列表成功"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                status: 200
+                message: "[GetProductList] 使用者取得產品列表成功"
+                timestamp: "2025-06-23T14:00:00"
+                data:
+                  products:
+                    - id: 1
+                      name: "藍芽耳機"
+                      price: 2000
+                      discountPrice: 1800
+                      imageUrl: "/upload/defaultProduct.jpg"
+                      category:
+                        id: 1
+                        name: "耳機"
+                      inStock: 20
+                      rating: 4.5
+                      soldCount: 36
+                      shortDescription: "這是最新款的藍芽耳機，目前折價9折熱賣中"
+                      tags: ["熱賣", "新品"]
+                    - id: 2
+                      name: "無線滑鼠"
+                      price: 800
+                      discountPrice: 720
+                      imageUrl: "/upload/defaultProduct2.jpg"
+                      category:
+                        id: 2
+                        name: "滑鼠"
+                      inStock: 50
+                      rating: 4.0
+                      soldCount: 100
+                      shortDescription: "這是最新款的無線滑鼠，目前折價9折熱賣中"
+                      tags: ["熱賣"]
+        '400':
+          description: "取得產品列表失敗"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                status: 400
+                message: "[GetProductList] 使用者取得產品列表失敗"
+                timestamp: "2025-06-23T14:00:00"
+                data:
+                  errors:
+                    general: "連線異常請重新登入"
+        '401':
+          $ref: "#/components/responses/UnauthorizedError"
+        '403':
+          $ref: "#/components/responses/forbiddenError"
+  /categories/{categoryId}/products:
+    get:
+      tags:
+        - categories
+      summary: "分類產品列表"
+      description: "取得特定分類的產品列表"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: categoryId
+          required: true
+          schema:
+            type: integer
+          description: "分類ID"
+      responses:
+        '200':
+          description: "取得分類產品列表成功"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                status: 200
+                message: "[GetCategoryProducts] 取得分類產品列表成功"
+                timestamp: "2025-06-23T14:00:00"
+                data:
+                  products:
+                    - id: 1
+                      name: "藍芽耳機"
+                      price: 2000
+                      discountPrice: 1800
+                      imageUrl: "/upload/defaultProduct.jpg"
+                      category:
+                        id: 1
+                        name: "耳機"
+                      inStock: 20
+                      rating: 4.5
+                      soldCount: 36
+                      shortDescription: "這是最新款的藍芽耳機，目前折價9折熱賣中"
+                      tags: ["熱賣", "新品"]
+        '400':
+          description: "取得分類產品列表失敗"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                status: 400
+                message: "[GetCategoryProducts] 取得分類產品列表失敗"
+                timestamp: "2025-06-23T14:00:00"
+                data:
+                  errors:
+                    general: "連線異常請重新登入"
+        '401':
+          $ref: "#/components/responses/UnauthorizedError"
+        '403':
+          $ref: "#/components/responses/forbiddenError"
+
 components:
   schemas:
     ApiResponse:
