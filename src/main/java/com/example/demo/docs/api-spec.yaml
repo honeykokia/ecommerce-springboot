@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=https://json-schema.org/draft/2020-12/schema
-openapi: 3.0.0
+openapi: 3.0.3
 info:
   title: E-Commerce-API Spec
   description: 電商API功能規劃
@@ -13,6 +13,8 @@ tags:
     description: "商品相關操作"
   - name: categories
     description: "商品分類相關操作"
+  - name: carts
+    description: "購物車相關操作"
 paths:
   /users/login:
     post:
@@ -35,7 +37,7 @@ paths:
                 $ref: "#/components/schemas/ApiResponse"
               example: 
                 status: 200
-                message: "[Login] 登入成功"
+                message: "[/users/login] 登入成功"
                 timestamp: "2025-06-23T14:00:00"
                 data:
                   email: "user@example.com"
@@ -49,7 +51,7 @@ paths:
                 $ref: "#/components/schemas/ApiResponse"
               example:
                 status: 400
-                message: "[Login] Invalid credentials"
+                message: "[/users/login] Invalid credentials"
                 timestamp: "2025-06-23T14:00:00"
                 data:
                   errors:
@@ -76,7 +78,7 @@ paths:
                 $ref: "#/components/schemas/ApiResponse"
               example: 
                 status: 200
-                message: "[Register] 註冊成功"
+                message: "[/users/register] 註冊成功"
                 timestamp: "2025-06-23T14:00:00"
                 data:
                   email: "Test@gmail.com"
@@ -90,7 +92,7 @@ paths:
                 $ref: "#/components/schemas/ApiResponse"
               example:
                 status: 400
-                message: "[Register] 註冊失敗"
+                message: "[/users/register] 註冊失敗"
                 timestamp: "2025-06-23T14:00:00"
                 data:
                   email: "格式不符合"
@@ -116,7 +118,7 @@ paths:
                 $ref: "#/components/schemas/ApiResponse"
               example:
                 status: 200
-                message: "[GetProfile] 取得使用者資料成功"
+                message: "[/users/me] 取得使用者資料成功"
                 timestamp: "2025-06-23T14:00:00"
                 data:
                   email: "user@example.com"
@@ -129,7 +131,7 @@ paths:
                 $ref: "#/components/schemas/ApiResponse"
               example:
                 status: 400
-                message: "[GetProfile] 取得使用者資料失敗"
+                message: "[/users/me] 取得使用者資料失敗"
                 timestamp: "2025-06-23T14:00:00"
                 data:
                   errors:
@@ -160,7 +162,7 @@ paths:
                 $ref: "#/components/schemas/ApiResponse"
               example:
                 status: 200
-                message: "[UpdateProfile] 更新使用者資料成功"
+                message: "[/users/me put] 更新使用者資料成功"
                 timestamp: "2025-06-23T14:00:00"
                 data: null
         '400':
@@ -171,7 +173,7 @@ paths:
                 $ref: "#/components/schemas/ApiResponse"
               example:
                 status: 400
-                message: "[UpdateProfile] 更新使用者資料失敗"
+                message: "[/users/me put] 更新使用者資料失敗"
                 timestamp: "2025-06-23T14:00:00"
                 data:
                   errors:
@@ -205,7 +207,7 @@ paths:
                 $ref: "#/components/schemas/ApiResponse"
               example:
                 status: 200
-                message: "[UpdatePassword] 更新密碼成功"
+                message: "[/users/me/password] 更新密碼成功"
                 timestamp: "2025-06-23T14:00:00"
                 data: null
         '400':
@@ -216,7 +218,7 @@ paths:
                 $ref: "#/components/schemas/ApiResponse"
               example:
                 status: 400
-                message: "[UpdatePassword] 更新密碼失敗"
+                message: "[/users/me/password] 更新密碼失敗"
                 timestamp: "2025-06-23T14:00:00"
                 data:
                   errors:
@@ -250,7 +252,7 @@ paths:
                 $ref: "#/components/schemas/ApiResponse"
               example:
                 status: 200
-                message: "[Verify] 使用者驗證成功"
+                message: "[/users/verify/{token}] 使用者驗證成功"
                 timestamp: "2025-06-23T14:00:00"
                 data: null
         '400':
@@ -261,7 +263,7 @@ paths:
                 $ref: "#/components/schemas/ApiResponse"
               example:
                 status: 400
-                message: "[Verify] 使用者驗證失敗"
+                message: "[/users/verify/{token}] 使用者驗證失敗"
                 timestamp: "2025-06-23T14:00:00"
                 data:
                   errors:
@@ -293,128 +295,18 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ApiResponse"
-              example:
-                status: 200
-                message: "成功"
-                timestamp: "2025-06-23T14:00:00"
-                data:
-                  product:
-                    id: 1
-                    name: "藍芽耳機"
-  /products:
-    get:
-      tags:
-        - products
-      summary: "產品列表"
-      description: "取得產品列表"
-      security:
-        - bearerAuth: []
-      responses:
-        '200':
-          description: "取得產品列表成功"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ApiResponse"
-              example:
-                status: 200
-                message: "[GetProductList] 使用者取得產品列表成功"
-                timestamp: "2025-06-23T14:00:00"
-                data:
-                  products:
-                    - id: 1
-                      name: "藍芽耳機"
-                      price: 2000
-                      discountPrice: 1800
-                      imageUrl: "/upload/defaultProduct.jpg"
-                      category:
-                        id: 1
-                        name: "耳機"
-                      inStock: 20
-                      rating: 4.5
-                      soldCount: 36
-                      shortDescription: "這是最新款的藍芽耳機，目前折價9折熱賣中"
-                      tags: ["熱賣", "新品"]
-                    - id: 2
-                      name: "無線滑鼠"
-                      price: 800
-                      discountPrice: 720
-                      imageUrl: "/upload/defaultProduct2.jpg"
-                      category:
-                        id: 2
-                        name: "滑鼠"
-                      inStock: 50
-                      rating: 4.0
-                      soldCount: 100
-                      shortDescription: "這是最新款的無線滑鼠，目前折價9折熱賣中"
-                      tags: ["熱賣"]
+              examples:
+                success:
+                  $ref: "#/components/examples/ProductExample"
         '400':
-          description: "取得產品列表失敗"
+          description: "取得產品內容失敗"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ApiResponse"
               example:
                 status: 400
-                message: "[GetProductList] 使用者取得產品列表失敗"
-                timestamp: "2025-06-23T14:00:00"
-                data:
-                  errors:
-                    general: "連線異常請重新登入"
-        '401':
-          $ref: "#/components/responses/UnauthorizedError"
-        '403':
-          $ref: "#/components/responses/forbiddenError"
-  /categories/{categoryId}/products:
-    get:
-      tags:
-        - categories
-      summary: "分類產品列表"
-      description: "取得特定分類的產品列表"
-      security:
-        - bearerAuth: []
-      parameters:
-        - in: path
-          name: categoryId
-          required: true
-          schema:
-            type: integer
-          description: "分類ID"
-      responses:
-        '200':
-          description: "取得分類產品列表成功"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ApiResponse"
-              example:
-                status: 200
-                message: "[GetCategoryProducts] 取得分類產品列表成功"
-                timestamp: "2025-06-23T14:00:00"
-                data:
-                  products:
-                    - id: 1
-                      name: "藍芽耳機"
-                      price: 2000
-                      discountPrice: 1800
-                      imageUrl: "/upload/defaultProduct.jpg"
-                      category:
-                        id: 1
-                        name: "耳機"
-                      inStock: 20
-                      rating: 4.5
-                      soldCount: 36
-                      shortDescription: "這是最新款的藍芽耳機，目前折價9折熱賣中"
-                      tags: ["熱賣", "新品"]
-        '400':
-          description: "取得分類產品列表失敗"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ApiResponse"
-              example:
-                status: 400
-                message: "[GetCategoryProducts] 取得分類產品列表失敗"
+                message: "[ /products/{productId} ] 使用者取得產品內容失敗"
                 timestamp: "2025-06-23T14:00:00"
                 data:
                   errors:
@@ -424,6 +316,214 @@ paths:
         '403':
           $ref: "#/components/responses/forbiddenError"
 
+  /products:
+    get:
+      tags:
+        - products
+      summary: "產品列表"
+      description: "取得產品列表"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: categoryId
+          required: false
+          schema:
+            type: integer
+          description: "分類ID"
+        - in: query
+          name: name
+          required: false
+          schema:
+            type: string
+          description: "產品名稱"
+      responses:
+        '200':
+          description: "取得產品列表成功"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              examples:
+                success:
+                  $ref: "#/components/schemas/ProductListResponse"
+        '400':
+          description: "取得產品列表失敗"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                status: 400
+                message: "[/products] 使用者取得產品列表失敗"
+                timestamp: "2025-06-23T14:00:00"
+                data:
+                  errors:
+                    general: "連線異常請重新登入"
+        '401':
+          $ref: "#/components/responses/UnauthorizedError"
+        '403':
+          $ref: "#/components/responses/forbiddenError"
+  /carts/me:
+    get:
+      tags:
+        - carts
+      summary: "使用者購物車"
+      description: "取得目前使用者的購物車內容"
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: "取得購物車內容成功"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                status: 200
+                message: "[/carts/me] 使用者取得購物車內容成功"
+                timestamp: "2025-06-23T14:00:00"
+                data:
+                  carts: []
+        '400':
+          description: "取得購物車內容失敗"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                status: 400
+                message: "[/carts/me] 使用者取得購物車內容失敗"
+                timestamp: "2025-06-23T14:00:00"
+                data:
+                  errors:
+                    general: "連線異常請重新登入"
+        '401':
+          $ref: "#/components/responses/UnauthorizedError"
+        '403':
+          $ref: "#/components/responses/forbiddenError"
+    post:
+      tags:
+        - carts
+      summary: "新增商品到購物車"
+      description: "將商品加入目前使用者的購物車"
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CartInfo"
+      responses:
+        '200':
+          description: "新增商品到購物車成功"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                status: 200
+                message: "[/carts/me post] 新增商品到購物車成功"
+                timestamp: "2025-06-23T14:00:00"
+                data: null
+        '400':
+          description: "新增商品到購物車失敗"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                status: 400
+                message: "[/carts/me post] 新增商品到購物車失敗"
+                timestamp: "2025-06-23T14:00:00"
+                data:
+                  errors:
+                    productId: "產品不存在或已下架"
+                    quantity: "數量必須大於0"
+        '401':
+          $ref: "#/components/responses/UnauthorizedError"
+        '403':
+          $ref: "#/components/responses/forbiddenError"
+    delete:
+      tags:
+        - carts
+      summary: "清空購物車"
+      description: "清空目前使用者的購物車內容"
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: "清空購物車成功"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                status: 200
+                message: "[/carts/me delete] 清空購物車成功"
+                timestamp: "2025-06-23T14:00:00"
+                data: null
+        '400':
+          description: "清空購物車失敗"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                status: 400
+                message: "[/carts/me delete] 清空購物車失敗"
+                timestamp: "2025-06-23T14:00:00"
+                data:
+                  errors:
+                    general: "連線異常請重新登入"
+        '401':
+          $ref: "#/components/responses/UnauthorizedError"
+        '403':
+          $ref: "#/components/responses/forbiddenError"
+    patch:
+      tags:
+        - carts
+      summary: "更新購物車商品數量"
+      description: "更新目前使用者購物車中商品的數量"
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CartInfo"
+      responses:
+        '200':
+          description: "更新購物車商品數量成功"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                status: 200
+                message: "[/carts/me patch] 更新購物車商品數量成功"
+                timestamp: "2025-06-23T14:00:00"
+                data: null
+        '400':
+          description: "更新購物車商品數量失敗"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                status: 400
+                message: "[/carts/me patch] 更新購物車商品數量失敗"
+                timestamp: "2025-06-23T14:00:00"
+                data:
+                  errors:
+                    productId: "產品不存在或已下架"
+                    quantity: "數量必須大於0"
+        '401':
+          $ref: "#/components/responses/UnauthorizedError"
+        '403':
+          $ref: "#/components/responses/forbiddenError"
 components:
   schemas:
     ApiResponse:
@@ -566,9 +666,9 @@ components:
         price:
           type: integer
           example: 2000
-        discountPrice:
+        promotionId:
           type: integer
-          example: 1800
+          example: 1
         imageUrl:
           type: string
           example: "/upload/defaultProduct.jpg"
@@ -599,7 +699,32 @@ components:
         name:
           type: string
           example: 耳機
-        
+    CartInfo:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        userId:
+          type: integer
+          example: 1
+        productId:
+          type: integer
+          example: 1
+        quantity:
+          type: integer
+          example: 2
+        price:
+          type: integer
+          example: 2000
+        createAt:
+          type: string
+          format: date-time
+          example: "2025-06-23T14:00:00"
+        updateAt:
+          type: string
+          format: date-time
+          example: "2025-06-23T14:00:00"
   securitySchemes:
     bearerAuth:
       type: http
@@ -639,3 +764,55 @@ components:
             message: "[NotFound] 資源不存在"
             timestamp: "2025-06-23T14:00:00"
             data: null
+  examples:
+    ProductExample:
+      value:
+        status: 200
+        message: "[/products/{productId}] 使用者取得產品內容成功"
+        timestamp: "2025-06-23T14:00:00"
+        product:
+          id: 1
+          name: "藍芽耳機"
+          price: 2000
+          promotionId: 1
+          imageUrl: "/upload/defaultProduct.jpg"
+          category:
+            id: 1
+            name: "耳機"
+          inStock: 20
+          rating: 4.5
+          soldCount: 36
+          shortDescription: "這是最新款的藍芽耳機，目前折價9折熱賣中"
+          tags: ["熱賣", "新品"]
+    ProductsExample:
+      value:
+        status: 200
+        message: "[/products/] 使用者取得產品列表成功"
+        timestamp: "2025-06-23T14:00:00"
+        products:
+          - id: 1
+            name: "藍芽耳機"
+            price: 2000
+            promotionId: 1
+            imageUrl: "/upload/defaultProduct.jpg"
+            category:
+              id: 1
+              name: "耳機"
+            inStock: 20
+            rating: 4.5
+            soldCount: 36
+            shortDescription: "這是最新款的藍芽耳機，目前折價9折熱賣中"
+            tags: ["熱賣", "新品"]
+          - id: 2
+            name: "無線滑鼠"
+            price: 800
+            promotionId: 1
+            imageUrl: "/upload/defaultProduct2.jpg"
+            category:
+              id: 2
+              name: "滑鼠"
+            inStock: 50
+            rating: 4.0
+            soldCount: 100
+            shortDescription: "這是最新款的無線滑鼠，目前折價9折熱賣中"
+            tags: ["熱賣"]
