@@ -370,6 +370,7 @@ paths:
         - carts
       summary: "使用者購物車"
       description: "取得目前使用者的購物車內容"
+
       security:
         - bearerAuth: []
       responses:
@@ -524,6 +525,7 @@ paths:
           $ref: "#/components/responses/UnauthorizedError"
         '403':
           $ref: "#/components/responses/forbiddenError"
+
 components:
   schemas:
     ApiResponse:
