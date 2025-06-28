@@ -14,5 +14,15 @@ user:
   createdAt: datetime
   lastLoginAt: datetime
 
-
-
+product:
+  id: string <<PK>>
+  categoryId: int <<FK>>
+  promotionId: string <<FK>>
+  name: string
+  price: long
+  imageUrl: string
+  inStock: int
+  rating: float
+  soldCount: int
+  shortDescription: string
+  tags: array
