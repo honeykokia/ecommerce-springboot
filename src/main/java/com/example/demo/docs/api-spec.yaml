@@ -17,6 +17,8 @@ tags:
     description: "購物車相關操作"
   - name: orders
     description: "訂單相關操作"
+  - name: events
+    description: "活動相關操作"
 paths:
   /users/login:
     post:
@@ -584,7 +586,7 @@ paths:
           $ref: "#/components/responses/UnauthorizedError"
         '403':
           $ref: "#/components/responses/forbiddenError"
-  /orders/me:
+  /orders:
     get:
       tags:
         - orders
@@ -601,7 +603,7 @@ paths:
                 $ref: "#/components/schemas/ApiResponse"
               example:
                 status: 200
-                message: "[/orders/me] 使用者取得訂單列表成功"
+                message: "[/orders] 使用者取得訂單列表成功"
                 timestamp: "2025-06-23T14:00:00"
                 data:
                   orders:
@@ -626,7 +628,72 @@ paths:
                 $ref: "#/components/schemas/ApiResponse"
               example:
                 status: 400
-                message: "[/orders/me] 使用者取得訂單列表失敗"
+                message: "[/orders] 使用者取得訂單列表失敗"
+                timestamp: "2025-06-23T14:00:00"
+                data:
+                  errors:
+                    general: "連線異常請重新登入"
+        '401':
+          $ref: "#/components/responses/UnauthorizedError"
+        '403':
+          $ref: "#/components/responses/forbiddenError"
+    post:
+      tags:
+        - orders
+      summary: "建立訂單"
+      description: "使用者提交購物車內容建立新的訂單"
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - cartId
+                - paymentMethod
+                - shippingMethod
+                - shippingAddress
+              properties:
+                cartId:
+                  type: integer
+                  example: 123
+                  description: "購物車 ID"
+                paymentMethod:
+                  type: string
+                  example: CREDIT_CARD
+                  description: "付款方式"
+                shippingMethod:
+                  type: string
+                  example: STANDARD
+                  description: "配送方式"
+                shippingAddress:
+                  type: string
+                  example: "台北市中正區某某路123號"
+                  description: "配送地址"
+      responses:
+        '200':
+          description: "建立訂單成功"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                status: 200
+                message: "[/orders post] 使用者建立訂單成功"
+                timestamp: "2025-06-23T14:00:00"
+                data:
+                  orderId: 1
+        '400':
+          description: "建立訂單失敗"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                status: 400
+                message: "[/orders post] 使用者建立訂單失敗"
                 timestamp: "2025-06-23T14:00:00"
                 data:
                   errors:
@@ -692,6 +759,54 @@ paths:
           $ref: "#/components/responses/UnauthorizedError"
         '403':
           $ref: "#/components/responses/forbiddenError"
+  /events:
+    get:
+      tags:
+        - events
+      summary: "活動列表"
+      description: "取得目前的活動列表"
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: "取得活動列表成功"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                status: 200
+                message: "[/events] 使用者取得活動列表成功"
+                timestamp: "2025-06-23T14:00:00"
+                data:
+                  events:
+                    - id: 1
+                      title: "夏季大促銷"
+                      description: "全館商品最高折扣50%"
+                      startDate: "2025-07-01"
+                      endDate: "2025-07-31"
+                    - id: 2
+                      title: "新品上市"
+                      description: "最新款藍芽耳機上市，限時折扣10%"
+                      startDate: "2025-06-20"
+                      endDate: "2025-07-20"
+        '400':
+          description: "取得活動列表失敗"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                status: 400
+                message: "[/events] 使用者取得活動列表失敗"
+                timestamp: "2025-06-23T14:00:00"
+                data:
+                  errors:
+                    general: "連線異常請重新登入"
+        '401':
+          $ref: "#/components/responses/UnauthorizedError"
+        '403':
+          $ref: "#/components/responses/forbiddenError" 
 components:
   schemas:
     ApiResponse:
@@ -955,6 +1070,41 @@ components:
           type: string
           format: date-time
           example: "2025-06-23T14:00:00"
+    EventInfo:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "夏季大促銷"
+        discountType:
+          type: string
+          enum: [PERCENTAGE, FIXED]
+          example: "PERCENTAGE"
+          description: "折扣類型：PERCENTAGE 為百分比折扣，FIXED 為固定金額折扣"
+        discountValue:
+          type: number
+          example: 50
+          description: "折扣值：若為百分比則代表百分比（50 表示 50%），若為固定金額則表示折抵金額（如 200 元"
+        description:
+          type: string
+          example: "全館商品最高折扣50%"
+        startDate:
+          type: string
+          format: date-time
+          example: "2025-06-01T00:00:00"
+        endDate:
+          type: string
+          format: date-time
+          example: "2025-06-30T23:59:59"
+        imageUrl:
+          type: string
+          example: "/upload/event.jpg"
+        isActive:
+          type: boolean
+          example: true
         
   securitySchemes:
     bearerAuth:
