@@ -343,7 +343,7 @@ paths:
                 $ref: "#/components/schemas/ApiResponse"
               example:
                 status: 400
-                message: "[/products] 使用者取得產品列表失敗"
+                message: "[/products/] 使用者取得產品列表失敗"
                 timestamp: "2025-06-23T14:00:00"
                 data:
                   errors:
