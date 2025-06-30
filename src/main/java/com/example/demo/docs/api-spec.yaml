@@ -19,6 +19,8 @@ tags:
     description: "訂單相關操作"
   - name: events
     description: "活動相關操作"
+  - name: admin
+    description: "管理員相關操作"
 paths:
   /users/login:
     post:
@@ -38,15 +40,18 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ApiResponse"
-              example: 
-                status: 200
-                message: "[/users/login] 登入成功"
-                timestamp: "2025-06-23T14:00:00"
-                data:
-                  email: "user@example.com"
-                  name: "TEST"
-                  token: "Bear xxxxx"
+                allOf:
+                  - $ref: "#/components/schemas/ApiResponse"
+                  - type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "[/users/login] 登入成功"
+                      data:
+                        type: object
+                        properties:
+                          user:
+                            $ref: "#/components/schemas/LoginInfo"
         '400':
           description: "登入失敗"
           content:
@@ -79,15 +84,18 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ApiResponse"
-              example: 
-                status: 200
-                message: "[/users/register] 註冊成功"
-                timestamp: "2025-06-23T14:00:00"
-                data:
-                  email: "Test@gmail.com"
-                  name: "Test"
-                  birthday: "2025-06-20"
+                allOf:
+                  - $ref: "#/components/schemas/ApiResponse"
+                  - type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "[/users/register] 註冊成功"
+                      data:
+                        type: object
+                        properties:
+                          user:
+                            $ref: "#/components/schemas/UserInfo"
         '400':
           description: "註冊失敗"
           content:
@@ -99,8 +107,9 @@ paths:
                 message: "[/users/register] 註冊失敗"
                 timestamp: "2025-06-23T14:00:00"
                 data:
-                  email: "格式不符合"
-                  password: "密碼未輸入"
+                  errors:
+                    email: "格式不符合"
+                    password: "密碼未輸入"
         '401': 
           $ref: "#/components/responses/UnauthorizedError"
         '403':
@@ -119,14 +128,18 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ApiResponse"
-              example:
-                status: 200
-                message: "[/users/me] 取得使用者資料成功"
-                timestamp: "2025-06-23T14:00:00"
-                data:
-                  email: "user@example.com"
-                  name: "TEST"
+                allOf:
+                  - $ref: "#/components/schemas/ApiResponse"
+                  - type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "[/users/me] 取得使用者資料成功"
+                      data:
+                        type: object
+                        properties:
+                          user:
+                            $ref: "#/components/schemas/UserInfo"
         '400':
           description: "查詢失敗"
           content:
@@ -163,12 +176,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ApiResponse"
-              example:
-                status: 200
-                message: "[/users/me put] 更新使用者資料成功"
-                timestamp: "2025-06-23T14:00:00"
-                data: null
+                allOf:
+                  - $ref: "#/components/schemas/ApiResponse"
+                  - type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "[/users/me put] 更新使用者資料成功"
         '400':
           description: "資料更新失敗"
           content:
@@ -208,12 +222,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ApiResponse"
-              example:
-                status: 200
-                message: "[/users/me/password] 更新密碼成功"
-                timestamp: "2025-06-23T14:00:00"
-                data: null
+                allOf:
+                  - $ref: "#/components/schemas/ApiResponse"
+                  - type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "[/users/me/password] 更新密碼成功"
         '400':
           description: "密碼修改失敗"
           content:
@@ -253,12 +268,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ApiResponse"
-              example:
-                status: 200
-                message: "[/users/verify/{token}] 使用者驗證成功"
-                timestamp: "2025-06-23T14:00:00"
-                data: null
+                allOf:
+                  - $ref: "#/components/schemas/ApiResponse"
+                  - type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "[/users/verify/{token}] 使用者驗證成功"
         '400':
           description: "驗證失敗"
           content:
@@ -303,38 +319,20 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ApiResponse"
-              example:
-                status: 200
-                message: "[/products] 使用者取得產品列表成功"
-                timestamp: "2025-06-23T14:00:00"
-                products:
-                  - id: 1
-                    name: "藍芽耳機"
-                    price: 2000
-                    promotionId: 1
-                    imageUrl: "/upload/defaultProduct.jpg"
-                    category:
-                      id: 1
-                      name: "耳機"
-                    inStock: 20
-                    rating: 4.5
-                    soldCount: 36
-                    shortDescription: "這是最新款的藍芽耳機，目前折價9折熱賣中"
-                    tags: ["熱賣", "新品"]
-                  - id: 2
-                    name: "無線滑鼠"
-                    price: 800
-                    promotionId: 1
-                    imageUrl: "/upload/defaultProduct2.jpg"
-                    category:
-                      id: 2
-                      name: "滑鼠"
-                    inStock: 50
-                    rating: 4.0
-                    soldCount: 100
-                    shortDescription: "這是最新款的無線滑鼠，目前折價9折熱賣中"
-                    tags: ["熱賣"]
+                allOf:
+                  - $ref: "#/components/schemas/ApiResponse"
+                  - type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "[/products] 使用者取得產品列表成功"
+                      data:
+                        type: object
+                        properties:
+                          products:
+                            type: array
+                            items:
+                              $ref: "#/components/schemas/ProductInfo"
         '400':
           description: "取得產品列表失敗"
           content:
@@ -344,49 +342,6 @@ paths:
               example:
                 status: 400
                 message: "[/products/] 使用者取得產品列表失敗"
-                timestamp: "2025-06-23T14:00:00"
-                data:
-                  errors:
-                    general: "連線異常請重新登入"
-        '401':
-          $ref: "#/components/responses/UnauthorizedError"
-        '403':
-          $ref: "#/components/responses/forbiddenError"
-    post:
-      tags:
-        - products
-      summary: "新增產品"
-      description: "新增一個產品"
-      security:
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/ProductInfo"
-      responses:
-        '201':
-          description: "新增產品成功"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ApiResponse"
-              example:
-                status: 201
-                message: "[/products post] 新增產品成功"
-                timestamp: "2025-06-23T14:00:00"
-                data:
-                  productId: 1
-        '400':
-          description: "新增產品失敗"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ApiResponse"
-              example:
-                status: 400
-                message: "[/products post] 新增產品失敗"
                 timestamp: "2025-06-23T14:00:00"
                 data:
                   errors:
@@ -416,25 +371,18 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ApiResponse"
-              example:
-                status: 200
-                message: "[/products/{productId}] 使用者取得產品內容成功"
-                timestamp: "2025-06-23T14:00:00"
-                product:
-                  id: 1
-                  name: "藍芽耳機"
-                  price: 2000
-                  promotionId: 1
-                  imageUrl: "/upload/defaultProduct.jpg"
-                  category:
-                    id: 1
-                    name: "耳機"
-                  inStock: 20
-                  rating: 4.5
-                  soldCount: 36
-                  shortDescription: "這是最新款的藍芽耳機，目前折價9折熱賣中"
-                  tags: ["熱賣", "新品"]
+                allOf:
+                  - $ref: "#/components/schemas/ApiResponse"
+                  - type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "[/products/{productId}] 使用者取得產品內容成功"
+                      data:
+                        type: object
+                        properties:
+                          product:
+                            $ref: "#/components/schemas/ProductInfo"
         '400':
           description: "取得產品內容失敗"
           content:
@@ -452,98 +400,7 @@ paths:
           $ref: "#/components/responses/UnauthorizedError"
         '403':
           $ref: "#/components/responses/forbiddenError"
-    put:
-      tags:
-        - products
-      summary: "更新產品"
-      description: "更新一個產品的內容"
-      security:
-        - bearerAuth: []
-      parameters:
-        - in: path
-          name: productId
-          required: true
-          schema:
-            type: integer
-          description: "產品ID"
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/ProductInfo"
-      responses:
-        '200':
-          description: "更新產品成功"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ApiResponse"
-              example:
-                status: 200
-                message: "[/products/{productId} put] 更新產品成功"
-                timestamp: "2025-06-23T14:00:00"
-                data: null
-        '400':
-          description: "更新產品失敗"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ApiResponse"
-              example:
-                status: 400
-                message: "[/products/{productId} put] 更新產品失敗"
-                timestamp: "2025-06-23T14:00:00"
-                data:
-                  errors:
-                    general: "連線異常請重新登入"
-        '401':
-          $ref: "#/components/responses/UnauthorizedError"
-        '403':
-          $ref: "#/components/responses/forbiddenError"
-    delete:
-      tags:
-        - products
-      summary: "刪除產品"
-      description: "刪除一個產品"
-      security:
-        - bearerAuth: []
-      parameters:
-        - in: path
-          name: productId
-          required: true
-          schema:
-            type: integer
-          description: "產品ID"
-      responses:
-        '200':
-          description: "刪除產品成功"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ApiResponse"
-              example:
-                status: 200
-                message: "[/products/{productId} delete] 刪除產品成功"
-                timestamp: "2025-06-23T14:00:00"
-                data: null
-        '400':
-          description: "刪除產品失敗"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ApiResponse"
-              example:
-                status: 400
-                message: "[/products/{productId} delete] 刪除產品失敗"
-                timestamp: "2025-06-23T14:00:00"
-                data:
-                  errors:
-                    general: "連線異常請重新登入"
-        '401':
-          $ref: "#/components/responses/UnauthorizedError"
-        '403':
-          $ref: "#/components/responses/forbiddenError"
+    
   /carts/me:
     get:
       tags:
@@ -892,99 +749,6 @@ paths:
           $ref: "#/components/responses/UnauthorizedError"
         '403':
           $ref: "#/components/responses/forbiddenError"
-  /orders/{orderId}:
-    put:
-      tags:
-        - orders
-      summary: "更新訂單狀態"
-      description: "更新指定訂單的狀態"
-      security:
-        - bearerAuth: []
-      parameters:
-        - in: path
-          name: orderId
-          required: true
-          schema:
-            type: integer
-          description: "訂單ID"
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/UpdateOrderRequest"
-      responses:
-        '200':
-          description: "更新訂單狀態成功"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ApiResponse"
-              example:
-                status: 200
-                message: "[/orders/{orderId} put] 更新訂單狀態成功"
-                timestamp: "2025-06-23T14:00:00"
-                data: null
-        '400':
-          description: "更新訂單狀態失敗"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ApiResponse"
-              example:
-                status: 400
-                message: "[/orders/{orderId} put] 更新訂單狀態失敗"
-                timestamp: "2025-06-23T14:00:00"
-                data:
-                  errors:
-                    general: "連線異常請重新登入"
-        '401':
-          $ref: "#/components/responses/UnauthorizedError"
-        '403':
-          $ref: "#/components/responses/forbiddenError"
-    delete:
-      tags:
-        - orders
-      summary: "刪除訂單"
-      description: "刪除指定訂單"
-      security:
-        - bearerAuth: []
-      parameters:
-        - in: path
-          name: orderId
-          required: true
-          schema:
-            type: integer
-          description: "訂單ID"
-      responses:
-        '200':
-          description: "刪除訂單成功"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ApiResponse"
-              example:
-                status: 200
-                message: "[/orders/{orderId} delete] 刪除訂單成功"
-                timestamp: "2025-06-23T14:00:00"
-                data: null
-        '400':
-          description: "刪除訂單失敗"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ApiResponse"
-              example:
-                status: 400
-                message: "[/orders/{orderId} delete] 刪除訂單失敗"
-                timestamp: "2025-06-23T14:00:00"
-                data:
-                  errors:
-                    general: "連線異常請重新登入"
-        '401':
-          $ref: "#/components/responses/UnauthorizedError"
-        '403':
-          $ref: "#/components/responses/forbiddenError"
   /events:
     get:
       tags:
@@ -1033,6 +797,61 @@ paths:
           $ref: "#/components/responses/UnauthorizedError"
         '403':
           $ref: "#/components/responses/forbiddenError" 
+  /admin/users/{userId}/status:
+    patch:
+      tags:
+        - admin
+      summary: "管理員更新使用者狀態"
+      description: "管理員可以更新使用者的狀態"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+          description: "使用者ID"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum: [ACTIVE, INACTIVE, BANNED]
+                  example: "ACTIVE"
+      responses:
+        '200':
+          description: "更新使用者狀態成功"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                status: 200
+                message: "[/admin/users/{userId}/status] 更新使用者狀態成功"
+                timestamp: "2025-06-23T14:00:00"
+                data: null
+        '400':
+          description: "更新使用者狀態失敗"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                status: 400
+                message: "[/admin/users/{userId}/status] 更新使用者狀態失敗"
+                timestamp: "2025-06-23T14:00:00"
+                data:
+                  errors:
+                    general: "連線異常請重新登入"
+        '401':
+          $ref: "#/components/responses/UnauthorizedError"
+        '403':
+          $ref: "#/components/responses/forbiddenError"
 components:
   schemas:
     ApiResponse:
@@ -1050,16 +869,6 @@ components:
         data:
           nullable: true
           type: object
-    ErrorDetail:
-      type: object
-      properties:
-        errors:
-          type: object
-          additionalProperties:
-            type: string
-          example:
-            email: "信箱格式不符"
-            password: "密碼錯誤"
     LoginRequest:
       type: object
       properties:
@@ -1159,6 +968,28 @@ components:
         pageSize:
           type: integer
           example: 20
+    ErrorInfo:
+      type: object
+      properties:
+        errors:
+          type: object
+          additionalProperties:
+            type: string
+          example:
+            email: "信箱格式不符"
+            password: "密碼錯誤"
+    LoginInfo:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Test"
+        email:
+          type: string
+          example: "test@gmail.com"
+        token:
+          type: string
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
     UserInfo:
       type: object
       properties:
@@ -1168,10 +999,6 @@ components:
         name:
           type: string
           example: "Test"
-        birthday:
-          type: string
-          format: date
-          example: 2025-06-20
     ProductInfo:
       type: object
       properties:
