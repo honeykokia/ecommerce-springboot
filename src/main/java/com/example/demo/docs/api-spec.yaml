@@ -1208,27 +1208,20 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ApiResponse"
-              example:
-                status: 200
-                message: "[/carts/me] 使用者取得購物車內容成功"
-                timestamp: "2025-06-23T14:00:00"
-                data:
-                  carts:
-                    - id: 1
-                      userId: 1
-                      productId: 1
-                      quantity: 2
-                      price: 2000
-                      createAt: "2025-06-23T14:00:00"
-                      updateAt: "2025-06-23T14:00:00"
-                    - id: 2
-                      userId: 1
-                      productId: 2
-                      quantity: 1
-                      price: 800
-                      createAt: "2025-06-23T14:00:00"
-                      updateAt: "2025-06-23T14:00:00"
+                allOf:
+                  - $ref: "#/components/schemas/ApiResponse"
+                  - type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "[/carts/me] 使用者取得購物車內容成功"
+                      data:
+                        type: object
+                        properties:
+                          carts:
+                            type: array
+                            items:
+                              $ref: "#/components/schemas/CartInfo"
         '400':
           description: "取得購物車內容失敗"
           content:
@@ -1265,12 +1258,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ApiResponse"
-              example:
-                status: 200
-                message: "[/carts/me post] 新增商品到購物車成功"
-                timestamp: "2025-06-23T14:00:00"
-                data: null
+                allOf:
+                  - $ref: "#/components/schemas/ApiResponse"
+                  - type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "[/carts/me post] 新增商品到購物車成功"
         '400':
           description: "新增商品到購物車失敗"
           content:
@@ -1283,7 +1277,7 @@ paths:
                 timestamp: "2025-06-23T14:00:00"
                 data:
                   errors:
-                    productId: "產品不存在或已下架"
+                    product: "產品不存在或已下架"
                     quantity: "數量必須大於0"
         '401':
           $ref: "#/components/responses/UnauthorizedError"
@@ -1302,12 +1296,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ApiResponse"
-              example:
-                status: 200
-                message: "[/carts/me delete] 清空購物車成功"
-                timestamp: "2025-06-23T14:00:00"
-                data: null
+                allOf:
+                  - $ref: "#/components/schemas/ApiResponse"
+                  - type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "[/carts/me delete] 清空購物車成功"
         '400':
           description: "清空購物車失敗"
           content:
@@ -1345,12 +1340,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ApiResponse"
-              example:
-                status: 200
-                message: "[/carts/me patch] 更新購物車商品數量成功"
-                timestamp: "2025-06-23T14:00:00"
-                data: null
+                allOf:
+                  - $ref: "#/components/schemas/ApiResponse"
+                  - type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "[/carts/me patch] 更新購物車商品數量成功"
         '400':
           description: "更新購物車商品數量失敗"
           content:
@@ -1432,42 +1428,25 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              required:
-                - cartId
-                - paymentMethod
-                - shippingMethod
-                - shippingAddress
-              properties:
-                cartId:
-                  type: integer
-                  example: 123
-                  description: "購物車 ID"
-                paymentMethod:
-                  type: string
-                  example: CREDIT_CARD
-                  description: "付款方式"
-                shippingMethod:
-                  type: string
-                  example: STANDARD
-                  description: "配送方式"
-                shippingAddress:
-                  type: string
-                  example: "台北市中正區某某路123號"
-                  description: "配送地址"
+              $ref: "#/components/schemas/CheckoutRequest"
       responses:
         '200':
           description: "建立訂單成功"
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ApiResponse"
-              example:
-                status: 200
-                message: "[/orders post] 使用者建立訂單成功"
-                timestamp: "2025-06-23T14:00:00"
-                data:
-                  orderId: 1
+                allOf:
+                  - $ref: "#/components/schemas/ApiResponse"
+                  - type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "[/orders post] 使用者建立訂單成功"
+                      data:
+                        type: object
+                        properties:
+                          order:
+                            $ref: "#/components/schemas/OrderInfo"
         '400':
           description: "建立訂單失敗"
           content:
@@ -1506,25 +1485,20 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ApiResponse"
-              example:
-                status: 200
-                message: "[/orders/{orderId}/items] 使用者取得訂單明細成功"
-                timestamp: "2025-06-23T14:00:00"
-                data:
-                  orderDetails:
-                    - id: 1
-                      productId: 1
-                      productName: "藍芽耳機"
-                      price: 2000
-                      quantity: 2
-                      subtotal: 4000
-                    - id: 2
-                      productId: 2
-                      productName: "無線滑鼠"
-                      price: 800
-                      quantity: 1
-                      subtotal: 800
+                allOf:
+                  - $ref: "#/components/schemas/ApiResponse"
+                  - type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "[/orders/{orderId}/items] 使用者取得訂單明細成功"
+                      data:
+                        type: object
+                        properties:
+                          orderDetails:
+                            type: array
+                            items:
+                              $ref: "#/components/schemas/OrderDetailInfo"
         '400':
           description: "取得訂單明細失敗"
           content:
@@ -1534,6 +1508,476 @@ paths:
               example:
                 status: 400
                 message: "[/orders/{orderId}/items] 使用者取得訂單明細失敗"
+                timestamp: "2025-06-23T14:00:00"
+                data:
+                  errors:
+                    general: "連線異常請重新登入"
+        '401':
+          $ref: "#/components/responses/UnauthorizedError"
+        '403':
+          $ref: "#/components/responses/forbiddenError"
+  /admin/users:
+    get:
+      tags:
+        - admin
+      summary: "管理員查詢使用者列表"
+      description: "管理員查詢所有使用者資料"
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: "查詢使用者列表成功"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiResponse"
+                  - type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "[/admin/users] 查詢使用者列表成功"
+                      data:
+                        type: object
+                        properties:
+                          users:
+                            type: array
+                            items:
+                              $ref: "#/components/schemas/UserInfo"
+        '400':
+          description: "查詢使用者列表失敗"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                status: 400
+                message: "[/admin/users] 查詢使用者列表失敗"
+                timestamp: "2025-06-23T14:00:00"
+                data:
+                  errors:
+                    general: "連線異常請重新登入"
+        '401':
+          $ref: "#/components/responses/UnauthorizedError"
+        '403':
+          $ref: "#/components/responses/forbiddenError"
+  /admin/users/{userId}/status:
+    patch:
+      tags:
+        - admin
+      summary: "管理員更新使用者狀態"
+      description: "管理員更新指定使用者的狀態"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+          description: "使用者ID"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum: [ACTIVE, INACTIVE, BANNED]
+                  example: ACTIVE
+      responses:
+        '200':
+          description: "更新使用者狀態成功"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiResponse"
+                  - type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "[/admin/users/{userId}/status] 更新使用者狀態成功"
+        '400':
+          description: "更新使用者狀態失敗"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                status: 400
+                message: "[/admin/users/{userId}/status] 更新使用者狀態失敗"
+                timestamp: "2025-06-23T14:00:00"
+                data:
+                  errors:
+                    general: "連線異常請重新登入"
+        '401':
+          $ref: "#/components/responses/UnauthorizedError"
+        '403':
+          $ref: "#/components/responses/forbiddenError"
+  /admin/products:
+    post:
+      tags:
+        - admin
+      summary: "新增商品"
+      description: "管理員新增商品資訊"
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProductInfo"
+      responses:
+        '200':
+          description: "新增商品成功"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiResponse"
+                  - type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "[/admin/products post] 新增商品成功"
+        '400':
+          description: "新增商品失敗"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                status: 400
+                message: "[/admin/products post] 新增商品失敗"
+                timestamp: "2025-06-23T14:00:00"
+                data:
+                  errors:
+                    name: "商品名稱未輸入"
+                    price: "價格必須大於0"
+        '401':
+          $ref: "#/components/responses/UnauthorizedError"
+        '403':
+          $ref: "#/components/responses/forbiddenError"
+  /admin/products/{productId}:
+    put:
+      tags:
+        - admin
+      summary: "更新商品"
+      description: "管理員更新商品資訊"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          schema:
+            type: integer
+          description: "商品ID"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProductInfo"
+      responses:
+        '200':
+          description: "更新商品成功"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiResponse"
+                  - type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "[/admin/{productId} put] 更新商品成功"
+        '400':
+          description: "更新商品失敗"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                status: 400
+                message: "[/admin/{productId} put] 更新商品失敗"
+                timestamp: "2025-06-23T14:00:00"
+                data:
+                  errors:
+                    name: "商品名稱未輸入"
+                    price: "價格必須大於0"
+        '401':
+          $ref: "#/components/responses/UnauthorizedError"
+        '403':
+          $ref: "#/components/responses/forbiddenError"
+    delete:
+      tags:
+        - admin
+      summary: "刪除商品"
+      description: "管理員刪除商品"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          schema:
+            type: integer
+          description: "商品ID"
+      responses:
+        '200':
+          description: "刪除商品成功"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiResponse"
+                  - type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "[/admin/{productId} delete] 刪除商品成功"
+        '400':
+          description: "刪除商品失敗"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                status: 400
+                message: "[/admin/{productId} delete] 刪除商品失敗"
+                timestamp: "2025-06-23T14:00:00"
+                data:
+                  errors:
+                    general: "連線異常請重新登入"
+        '401':
+          $ref: "#/components/responses/UnauthorizedError"
+        '403':
+          $ref: "#/components/responses/forbiddenError"
+  /admin/orders:
+    get:
+      tags:
+        - admin
+      summary: "管理員查詢訂單列表"
+      description: "管理員查詢所有訂單資料"
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: "查詢訂單列表成功"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiResponse"
+                  - type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "[/admin/orders] 查詢訂單列表成功"
+                      data:
+                        type: object
+                        properties:
+                          orders:
+                            type: array
+                            items:
+                              $ref: "#/components/schemas/OrderInfo"
+        '400':
+          description: "查詢訂單列表失敗"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                status: 400
+                message: "[/admin/orders] 查詢訂單列表失敗"
+                timestamp: "2025-06-23T14:00:00"
+                data:
+                  errors:
+                    general: "連線異常請重新登入"
+        '401':
+          $ref: "#/components/responses/UnauthorizedError"
+        '403':
+          $ref: "#/components/responses/forbiddenError"
+  /admin/orders/{orderId}:
+    patch:
+      tags:
+        - admin
+      summary: "管理員更新訂單狀態"
+      description: "管理員更新指定訂單的狀態"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: orderId
+          required: true
+          schema:
+            type: integer
+          description: "訂單ID"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateOrderRequest"
+      responses:
+        '200':
+          description: "更新訂單狀態成功"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiResponse"
+                  - type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "[/admin/orders/{orderId} patch] 更新訂單狀態成功"
+        '400':
+          description: "更新訂單狀態失敗"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                status: 400
+                message: "[/admin/orders/{orderId} patch] 更新訂單狀態失敗"
+                timestamp: "2025-06-23T14:00:00"
+                data:
+                  errors:
+                    general: "連線異常請重新登入"
+        '401':
+          $ref: "#/components/responses/UnauthorizedError"
+        '403':
+          $ref: "#/components/responses/forbiddenError"
+    delete:
+      tags:
+        - admin
+      summary: "管理員刪除訂單"
+      description: "管理員刪除指定訂單"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: orderId
+          required: true
+          schema:
+            type: integer
+          description: "訂單ID"
+      responses:
+        '200':
+          description: "刪除訂單成功"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiResponse"
+                  - type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "[/admin/orders/{orderId} delete] 刪除訂單成功"
+        '400':
+          description: "刪除訂單失敗"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                status: 400
+                message: "[/admin/orders/{orderId} delete] 刪除訂單失敗"
+                timestamp: "2025-06-23T14:00:00"
+                data:
+                  errors:
+                    general: "連線異常請重新登入"
+        '401':
+          $ref: "#/components/responses/UnauthorizedError"
+        '403':
+          $ref: "#/components/responses/forbiddenError"
+  /payments/initiate:
+    post:
+      tags:
+        - payments
+      summary: "初始化付款"
+      description: "使用者提交付款資訊以初始化付款流程"
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PaymentInitiateRequest"
+      responses:
+        '200':
+          description: "付款初始化成功"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiResponse"
+                  - type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "[/payments/initiate] 付款初始化成功"
+        '400':
+          description: "付款初始化失敗"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                status: 400
+                message: "[/payments/initiate] 付款初始化失敗"
+                timestamp: "2025-06-23T14:00:00"
+                data:
+                  errors:
+                    general: "連線異常請重新登入"
+        '401':
+          $ref: "#/components/responses/UnauthorizedError"
+        '403':
+          $ref: "#/components/responses/forbiddenError" 
+  /payments/mock:
+    post:
+      tags:
+        - payments
+      summary: "模擬付款"
+      description: "模擬付款流程以測試支付系統"
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PaymentMockRequest"
+      responses:
+        '200':
+          description: "模擬付款成功"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiResponse"
+                  - type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "[/payments/mock] 模擬付款成功"
+        '400':
+          description: "模擬付款失敗"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                status: 400
+                message: "[/payments/mock] 模擬付款失敗"
                 timestamp: "2025-06-23T14:00:00"
                 data:
                   errors:
@@ -1631,8 +2075,13 @@ components:
         shippingAddress:
           type: string
           example: "台北市中正區某某路123號"
-    ProductResponse:
+    CheckoutRequest:
       type: object
+      required:
+        - cartId
+        - paymentMethod
+        - shippingMethod
+        - shippingAddress
       properties:
         status:
           type: string
