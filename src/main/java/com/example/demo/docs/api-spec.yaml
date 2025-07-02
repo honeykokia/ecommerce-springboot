@@ -46,9 +46,6 @@ paths:
                   - $ref: "#/components/schemas/ApiResponse"
                   - type: object
                     properties:
-                      message:
-                        type: string
-                        example: "[/users/login] 登入成功"
                       data:
                         type: object
                         properties:
@@ -61,8 +58,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/ApiResponse"
               example:
-                status: 400
-                message: "[/users/login] Invalid credentials"
                 timestamp: "2025-06-23T14:00:00"
                 data:
                   errors:
@@ -90,9 +85,6 @@ paths:
                   - $ref: "#/components/schemas/ApiResponse"
                   - type: object
                     properties:
-                      message:
-                        type: string
-                        example: "[/users/register] 註冊成功"
                       data:
                         type: object
                         properties:
@@ -105,8 +97,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/ApiResponse"
               example:
-                status: 400
-                message: "[/users/register] 註冊失敗"
                 timestamp: "2025-06-23T14:00:00"
                 data:
                   errors:
@@ -134,9 +124,6 @@ paths:
                   - $ref: "#/components/schemas/ApiResponse"
                   - type: object
                     properties:
-                      message:
-                        type: string
-                        example: "[/users/me] 取得使用者資料成功"
                       data:
                         type: object
                         properties:
@@ -149,8 +136,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/ApiResponse"
               example:
-                status: 400
-                message: "[/users/me] 取得使用者資料失敗"
                 timestamp: "2025-06-23T14:00:00"
                 data:
                   errors:
@@ -178,13 +163,7 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: "#/components/schemas/ApiResponse"
-                  - type: object
-                    properties:
-                      message:
-                        type: string
-                        example: "[/users/me put] 更新使用者資料成功"
+                $ref: "#/components/schemas/ApiResponse"
         '400':
           description: "資料更新失敗"
           content:
@@ -192,8 +171,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/ApiResponse"
               example:
-                status: 400
-                message: "[/users/me put] 更新使用者資料失敗"
                 timestamp: "2025-06-23T14:00:00"
                 data:
                   errors:
@@ -224,13 +201,7 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: "#/components/schemas/ApiResponse"
-                  - type: object
-                    properties:
-                      message:
-                        type: string
-                        example: "[/users/me/password] 更新密碼成功"
+                $ref: "#/components/schemas/ApiResponse"
         '400':
           description: "密碼修改失敗"
           content:
@@ -238,8 +209,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/ApiResponse"
               example:
-                status: 400
-                message: "[/users/me/password] 更新密碼失敗"
                 timestamp: "2025-06-23T14:00:00"
                 data:
                   errors:
@@ -270,13 +239,7 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: "#/components/schemas/ApiResponse"
-                  - type: object
-                    properties:
-                      message:
-                        type: string
-                        example: "[/users/verify/{token}] 使用者驗證成功"
+                $ref: "#/components/schemas/ApiResponse"
         '400':
           description: "驗證失敗"
           content:
@@ -284,8 +247,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/ApiResponse"
               example:
-                status: 400
-                message: "[/users/verify/{token}] 使用者驗證失敗"
                 timestamp: "2025-06-23T14:00:00"
                 data:
                   errors:
@@ -325,9 +286,6 @@ paths:
                   - $ref: "#/components/schemas/ApiResponse"
                   - type: object
                     properties:
-                      message:
-                        type: string
-                        example: "[/products] 使用者取得產品列表成功"
                       data:
                         type: object
                         properties:
@@ -342,8 +300,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/ApiResponse"
               example:
-                status: 400
-                message: "[/products/] 使用者取得產品列表失敗"
                 timestamp: "2025-06-23T14:00:00"
                 data:
                   errors:
@@ -377,9 +333,6 @@ paths:
                   - $ref: "#/components/schemas/ApiResponse"
                   - type: object
                     properties:
-                      message:
-                        type: string
-                        example: "[/products/{productId}] 使用者取得產品內容成功"
                       data:
                         type: object
                         properties:
@@ -392,8 +345,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/ApiResponse"
               example:
-                status: 400
-                message: "[/products/{productId}] 使用者取得產品內容失敗"
                 timestamp: "2025-06-23T14:00:00"
                 data:
                   errors:
@@ -421,9 +372,6 @@ paths:
                   - $ref: "#/components/schemas/ApiResponse"
                   - type: object
                     properties:
-                      message:
-                        type: string
-                        example: "[/carts/me] 使用者取得購物車內容成功"
                       data:
                         type: object
                         properties:
@@ -438,8 +386,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/ApiResponse"
               example:
-                status: 400
-                message: "[/carts/me] 使用者取得購物車內容失敗"
                 timestamp: "2025-06-23T14:00:00"
                 data:
                   errors:
@@ -467,13 +413,7 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: "#/components/schemas/ApiResponse"
-                  - type: object
-                    properties:
-                      message:
-                        type: string
-                        example: "[/carts/me post] 新增商品到購物車成功"
+                $ref: "#/components/schemas/ApiResponse"
         '400':
           description: "新增商品到購物車失敗"
           content:
@@ -481,8 +421,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/ApiResponse"
               example:
-                status: 400
-                message: "[/carts/me post] 新增商品到購物車失敗"
                 timestamp: "2025-06-23T14:00:00"
                 data:
                   errors:
@@ -505,13 +443,7 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: "#/components/schemas/ApiResponse"
-                  - type: object
-                    properties:
-                      message:
-                        type: string
-                        example: "[/carts/me delete] 清空購物車成功"
+                $ref: "#/components/schemas/ApiResponse"
         '400':
           description: "清空購物車失敗"
           content:
@@ -519,8 +451,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/ApiResponse"
               example:
-                status: 400
-                message: "[/carts/me delete] 清空購物車失敗"
                 timestamp: "2025-06-23T14:00:00"
                 data:
                   errors:
@@ -537,8 +467,7 @@ paths:
       security:
         - bearerAuth: []
       requestBody:
-        required:
-          quantity: true
+        required: true
         content:
           application/json:
             schema:
@@ -549,13 +478,7 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: "#/components/schemas/ApiResponse"
-                  - type: object
-                    properties:
-                      message:
-                        type: string
-                        example: "[/carts/me patch] 更新購物車商品數量成功"
+                $ref: "#/components/schemas/ApiResponse"
         '400':
           description: "更新購物車商品數量失敗"
           content:
@@ -563,8 +486,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/ApiResponse"
               example:
-                status: 400
-                message: "[/carts/me patch] 更新購物車商品數量失敗"
                 timestamp: "2025-06-23T14:00:00"
                 data:
                   errors:
@@ -588,26 +509,17 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ApiResponse"
-              example:
-                status: 200
-                message: "[/orders] 使用者取得訂單列表成功"
-                timestamp: "2025-06-23T14:00:00"
-                data:
-                  orders:
-                    - id: 1
-                      userId: 1
-                      orderNumber: "ORD123456789"
-                      status: "PENDING"
-                      paymentMethod: "CREDIT_CARD"
-                      isPaid: false
-                      paidAt: null
-                      shippingMethod: "STANDARD"
-                      shippingAddress: "台北市中正區某某路123號"
-                      shippingStatus: "PENDING"
-                      totalPrice: 4000
-                      createAt: "2025-06-23T14:00:00"
-                      updateAt: "2025-06-23T14:00:00"
+                allOf:
+                  - $ref: "#/components/schemas/ApiResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          orders:
+                            type: array
+                            items:
+                              $ref: "#/components/schemas/OrderInfo"
         '400':
           description: "取得訂單列表失敗"
           content:
@@ -615,8 +527,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/ApiResponse"
               example:
-                status: 400
-                message: "[/orders] 使用者取得訂單列表失敗"
                 timestamp: "2025-06-23T14:00:00"
                 data:
                   errors:
@@ -648,9 +558,6 @@ paths:
                   - $ref: "#/components/schemas/ApiResponse"
                   - type: object
                     properties:
-                      message:
-                        type: string
-                        example: "[/orders post] 使用者建立訂單成功"
                       data:
                         type: object
                         properties:
@@ -663,8 +570,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/ApiResponse"
               example:
-                status: 400
-                message: "[/orders post] 使用者建立訂單失敗"
                 timestamp: "2025-06-23T14:00:00"
                 data:
                   errors:
@@ -698,9 +603,6 @@ paths:
                   - $ref: "#/components/schemas/ApiResponse"
                   - type: object
                     properties:
-                      message:
-                        type: string
-                        example: "[/orders/{orderId}/items] 使用者取得訂單明細成功"
                       data:
                         type: object
                         properties:
@@ -715,8 +617,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/ApiResponse"
               example:
-                status: 400
-                message: "[/orders/{orderId}/items] 使用者取得訂單明細失敗"
                 timestamp: "2025-06-23T14:00:00"
                 data:
                   errors:
@@ -743,9 +643,6 @@ paths:
                   - $ref: "#/components/schemas/ApiResponse"
                   - type: object
                     properties:
-                      message:
-                        type: string
-                        example: "[/admin/users] 查詢使用者列表成功"
                       data:
                         type: object
                         properties:
@@ -760,8 +657,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/ApiResponse"
               example:
-                status: 400
-                message: "[/admin/users] 查詢使用者列表失敗"
                 timestamp: "2025-06-23T14:00:00"
                 data:
                   errors:
@@ -802,13 +697,8 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: "#/components/schemas/ApiResponse"
-                  - type: object
-                    properties:
-                      message:
-                        type: string
-                        example: "[/admin/users/{userId}/status] 更新使用者狀態成功"
+                $ref: "#/components/schemas/ApiResponse"
+
         '400':
           description: "更新使用者狀態失敗"
           content:
@@ -816,8 +706,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/ApiResponse"
               example:
-                status: 400
-                message: "[/admin/users/{userId}/status] 更新使用者狀態失敗"
                 timestamp: "2025-06-23T14:00:00"
                 data:
                   errors:
@@ -846,13 +734,7 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: "#/components/schemas/ApiResponse"
-                  - type: object
-                    properties:
-                      message:
-                        type: string
-                        example: "[/admin/products post] 新增商品成功"
+                $ref: "#/components/schemas/ApiResponse"
         '400':
           description: "新增商品失敗"
           content:
@@ -860,8 +742,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/ApiResponse"
               example:
-                status: 400
-                message: "[/admin/products post] 新增商品失敗"
                 timestamp: "2025-06-23T14:00:00"
                 data:
                   errors:
@@ -898,13 +778,7 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: "#/components/schemas/ApiResponse"
-                  - type: object
-                    properties:
-                      message:
-                        type: string
-                        example: "[/admin/{productId} put] 更新商品成功"
+                $ref: "#/components/schemas/ApiResponse"
         '400':
           description: "更新商品失敗"
           content:
@@ -912,8 +786,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/ApiResponse"
               example:
-                status: 400
-                message: "[/admin/{productId} put] 更新商品失敗"
                 timestamp: "2025-06-23T14:00:00"
                 data:
                   errors:
@@ -943,13 +815,7 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: "#/components/schemas/ApiResponse"
-                  - type: object
-                    properties:
-                      message:
-                        type: string
-                        example: "[/admin/{productId} delete] 刪除商品成功"
+                $ref: "#/components/schemas/ApiResponse"
         '400':
           description: "刪除商品失敗"
           content:
@@ -957,8 +823,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/ApiResponse"
               example:
-                status: 400
-                message: "[/admin/{productId} delete] 刪除商品失敗"
                 timestamp: "2025-06-23T14:00:00"
                 data:
                   errors:
@@ -985,9 +849,6 @@ paths:
                   - $ref: "#/components/schemas/ApiResponse"
                   - type: object
                     properties:
-                      message:
-                        type: string
-                        example: "[/admin/orders] 查詢訂單列表成功"
                       data:
                         type: object
                         properties:
@@ -1002,8 +863,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/ApiResponse"
               example:
-                status: 400
-                message: "[/admin/orders] 查詢訂單列表失敗"
                 timestamp: "2025-06-23T14:00:00"
                 data:
                   errors:
@@ -1039,13 +898,7 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: "#/components/schemas/ApiResponse"
-                  - type: object
-                    properties:
-                      message:
-                        type: string
-                        example: "[/admin/orders/{orderId} patch] 更新訂單狀態成功"
+                $ref: "#/components/schemas/ApiResponse"
         '400':
           description: "更新訂單狀態失敗"
           content:
@@ -1053,8 +906,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/ApiResponse"
               example:
-                status: 400
-                message: "[/admin/orders/{orderId} patch] 更新訂單狀態失敗"
                 timestamp: "2025-06-23T14:00:00"
                 data:
                   errors:
@@ -1083,13 +934,7 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: "#/components/schemas/ApiResponse"
-                  - type: object
-                    properties:
-                      message:
-                        type: string
-                        example: "[/admin/orders/{orderId} delete] 刪除訂單成功"
+                $ref: "#/components/schemas/ApiResponse"
         '400':
           description: "刪除訂單失敗"
           content:
@@ -1097,8 +942,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/ApiResponse"
               example:
-                status: 400
-                message: "[/admin/orders/{orderId} delete] 刪除訂單失敗"
                 timestamp: "2025-06-23T14:00:00"
                 data:
                   errors:
@@ -1127,13 +970,7 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: "#/components/schemas/ApiResponse"
-                  - type: object
-                    properties:
-                      message:
-                        type: string
-                        example: "[/payments/initiate] 付款初始化成功"
+                $ref: "#/components/schemas/ApiResponse"
         '400':
           description: "付款初始化失敗"
           content:
@@ -1141,8 +978,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/ApiResponse"
               example:
-                status: 400
-                message: "[/payments/initiate] 付款初始化失敗"
                 timestamp: "2025-06-23T14:00:00"
                 data:
                   errors:
@@ -1171,13 +1006,8 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: "#/components/schemas/ApiResponse"
-                  - type: object
-                    properties:
-                      message:
-                        type: string
-                        example: "[/payments/mock] 模擬付款成功"
+                $ref: "#/components/schemas/ApiResponse"
+
         '400':
           description: "模擬付款失敗"
           content:
@@ -1185,8 +1015,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/ApiResponse"
               example:
-                status: 400
-                message: "[/payments/mock] 模擬付款失敗"
                 timestamp: "2025-06-23T14:00:00"
                 data:
                   errors:
@@ -1200,12 +1028,6 @@ components:
     ApiResponse:
       type: object
       properties:
-        status:
-          type: integer
-          example: 200
-        message:
-          type: string
-          example: "OK"
         timestamp:
           type: string
           format: date-time
@@ -1251,7 +1073,7 @@ components:
           example: 2025-06-20
         phone:
           type: string
-          example: 0912345678
+          example: "0912345678"
         city:
           type: string
           example: "台北市"
@@ -1558,8 +1380,6 @@ components:
           schema:
             $ref: "#/components/schemas/ApiResponse"
           example:
-            status: 401
-            message: "[Unauthorized] 使用者未登入或Token無效"
             timestamp: "2025-06-23T14:00:00"
             data: null
     forbiddenError:
@@ -1569,8 +1389,6 @@ components:
           schema:
             $ref: "#/components/schemas/ApiResponse"
           example:
-            status: 403
-            message: "[Forbidden] 使用者無權限存取此資源"
             timestamp: "2025-06-23T14:00:00"
             data: null
     NotFoundError:
@@ -1580,8 +1398,6 @@ components:
           schema:
             $ref: "#/components/schemas/ApiResponse"
           example:
-            status: 404
-            message: "[NotFound] 資源不存在"
             timestamp: "2025-06-23T14:00:00"
             data: null
   examples:
