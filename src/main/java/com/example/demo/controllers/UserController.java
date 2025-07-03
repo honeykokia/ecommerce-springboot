@@ -18,17 +18,20 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 
 
 
 @Slf4j
 @RestController
-@RequestMapping("/users/")
+@RequestMapping("/users")
 public class UserController {
 
-    @PostMapping("login")
+    @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
 
         LoginInfo loginInfo = new LoginInfo();
@@ -40,7 +43,7 @@ public class UserController {
         return ResponseEntity.ok().body(response);
     }
 
-    @PostMapping("register")
+    @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest registerRequest) {
         UserInfo userInfo = new UserInfo();
         userInfo.setName("Test");
@@ -50,7 +53,7 @@ public class UserController {
         return ResponseEntity.ok().body(response);
     }
     
-    @GetMapping("me")
+    @GetMapping("/me")
     public ResponseEntity<?> getProfile() {
         UserInfo userInfo = new UserInfo();
         userInfo.setName("Test");
@@ -60,17 +63,26 @@ public class UserController {
         return ResponseEntity.ok().body(response);
     }
     
-    @PutMapping("me")
+    @PutMapping("/me")
     public ResponseEntity<?> editProfile(@RequestBody UpdateUserRequest updateUserRequest) {
 
         ApiResponse response = new ApiResponse(updateUserRequest);
         return ResponseEntity.ok().body(response);
     }
 
-    @PatchMapping("me/password")
+    @PatchMapping("/me/password")
     public ResponseEntity<?> changePassword(@RequestBody UpdatePasswordRequest updatePasswordRequest) {
 
         ApiResponse response = new ApiResponse(null);
         return ResponseEntity.ok().body(response);
     }
+
+    @GetMapping("/verify/{token}")
+    public ResponseEntity<?> verifyEmail(@PathVariable String token) {
+
+        ApiResponse response = new ApiResponse(null);
+        return ResponseEntity.ok().body(response);
+    }
+    
+
 }

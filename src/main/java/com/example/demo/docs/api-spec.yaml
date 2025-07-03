@@ -1212,8 +1212,9 @@ components:
         imageUrl:
           type: string
           example: "/upload/defaultProduct.jpg"
-        category:
-          $ref: "#/components/schemas/CategoryInfo"
+        categoryId:
+          type: integer
+          example: 1
         inStock:
           type: integer
           example: 20

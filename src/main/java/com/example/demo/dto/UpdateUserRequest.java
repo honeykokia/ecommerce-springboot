@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 public class UpdateUserRequest {
     private String name;
-    private byte gender;
+    private Byte gender;
     private LocalDate birthday;
     private String phone;
     private String image;
