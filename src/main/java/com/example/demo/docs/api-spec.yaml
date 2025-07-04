@@ -375,7 +375,7 @@ paths:
                       data:
                         type: object
                         properties:
-                          carts:
+                          cart:
                             type: array
                             items:
                               $ref: "#/components/schemas/CartInfo"
@@ -459,19 +459,63 @@ paths:
           $ref: "#/components/responses/UnauthorizedError"
         '403':
           $ref: "#/components/responses/forbiddenError"
+  /carts/me/{productId}:
+    delete:
+      tags:
+        - carts
+      summary: "從購物車移除商品"
+      description: "從目前使用者的購物車中移除指定商品"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          schema:
+            type: integer
+          description: "商品ID"
+      responses:
+        '200':
+          description: "從購物車移除商品成功"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+        '400':
+          description: "從購物車移除商品失敗"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                timestamp: "2025-06-23T14:00:00"
+                data:
+                  errors:
+                    productId: "產品不存在或已下架"
+        '401':
+          $ref: "#/components/responses/UnauthorizedError"
+        '403':
+          $ref: "#/components/responses/forbiddenError"
     patch:
       tags:
         - carts
       summary: "更新購物車商品數量"
-      description: "更新目前使用者購物車中商品的數量"
+      description: "更新目前使用者購物車中指定商品的數量"
       security:
         - bearerAuth: []
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          schema:
+            type: integer
+          description: "商品ID"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/CartInfo"
+              $ref: "#/components/schemas/UpdateCartProductRequest"
       responses:
         '200':
           description: "更新購物車商品數量成功"
@@ -1121,7 +1165,7 @@ components:
         - shippingAddress
       properties:
         cartId:
-          type: integer
+          type: long
           example: 123
           description: "購物車 ID"
         paymentMethod:
@@ -1144,7 +1188,7 @@ components:
       type: object
       properties:
         orderId:
-          type: integer
+          type: long
           example: 1
         paymentMethod:
           type: string
@@ -1157,12 +1201,18 @@ components:
       type: object
       properties:
         orderId:
-          type: integer
+          type: long
           example: 1
         status:
           type: string
           enum: [SUCCESS, FAILED]
           example: "SUCCESS"
+    UpdateCartProductRequest:
+      type: object
+      properties:
+        quantity:
+          type: integer
+          example: 2
     ErrorInfo:
       type: object
       properties:
@@ -1198,7 +1248,7 @@ components:
       type: object
       properties:
         id:
-          type: integer
+          type: long
           example: 1
         name:
           type: string
@@ -1207,13 +1257,13 @@ components:
           type: integer
           example: 2000
         promotionId:
-          type: integer
+          type: long
           example: 1
         imageUrl:
           type: string
           example: "/upload/defaultProduct.jpg"
         categoryId:
-          type: integer
+          type: long
           example: 1
         inStock:
           type: integer
@@ -1235,7 +1285,7 @@ components:
       type: object
       properties:
         id:
-          type: integer
+          type: long
           example: 1
         name:
           type: string
@@ -1244,10 +1294,10 @@ components:
       type: object
       properties:
         id:
-          type: integer
+          type: long
           example: 1
         userId:
-          type: integer
+          type: long
           example: 1
         productId:
           type: integer
@@ -1270,10 +1320,10 @@ components:
       type: object
       properties:
         id:
-          type: integer
+          type: long
           example: 1
         productId:
-          type: integer
+          type: long
           example: 1
         productName:
           type: string
@@ -1291,10 +1341,10 @@ components:
       type: object
       properties:
         id:
-          type: integer
+          type: long
           example: 1
         userId:
-          type: integer
+          type: long
           example: 1
         orderNumber:
           type: string
@@ -1337,7 +1387,7 @@ components:
       type: object
       properties:
         id:
-          type: integer
+          type: long
           example: 1
         name:
           type: string
