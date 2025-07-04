@@ -8,7 +8,10 @@ import com.example.demo.dto.UpdateCartProductRequest;
 import com.example.demo.responses.ApiResponse;
 
 import java.util.HashMap;
+<<<<<<< HEAD
 import java.util.List;
+=======
+>>>>>>> 34579b3 (feat: add CartController APIs, DTOs, Request and correct api-spec (#10))
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
