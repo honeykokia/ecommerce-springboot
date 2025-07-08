@@ -6,6 +6,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.dto.ProductInfo;
 import com.example.demo.responses.ApiResponse;
 
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,7 +35,7 @@ public class ProductController {
         productInfo.setShortDescription("這是一款高品質的藍芽耳機，提供卓越的音質和舒適的佩戴體驗。");
         productInfo.setTags(new String[]{"藍芽", "耳機", "音樂", "科技"});
 
-        ApiResponse response = new ApiResponse(productInfo);
+        ApiResponse response = new ApiResponse(Map.of("products",List.of(productInfo)));
         return ResponseEntity.ok(response);
     }
 
