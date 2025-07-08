@@ -539,7 +539,7 @@ paths:
           $ref: "#/components/responses/UnauthorizedError"
         '403':
           $ref: "#/components/responses/forbiddenError"
-  /orders:
+  /orders/me:
     get:
       tags:
         - orders
@@ -1319,7 +1319,7 @@ components:
     OrderDetailInfo:
       type: object
       properties:
-        id:
+        orderId:
           type: long
           example: 1
         productId:
@@ -1334,7 +1334,7 @@ components:
         quantity:
           type: integer
           example: 2
-        subtotal:
+        totalPrice:
           type: integer
           example: 4000
     OrderInfo:
@@ -1373,7 +1373,7 @@ components:
           type: string
           example: "PENDING"
         totalPrice:
-          type: integer
+          type: long
           example: 4000
         createAt:
           type: string

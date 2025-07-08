@@ -8,6 +8,7 @@ import com.example.demo.dto.UpdateCartProductRequest;
 import com.example.demo.responses.ApiResponse;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
@@ -35,7 +36,7 @@ public class CartController {
         cartInfo.setPrice(2000);
         cartInfo.setCreatedAt(java.time.LocalDateTime.now());
         cartInfo.setUpdatedAt(java.time.LocalDateTime.now());
-        ApiResponse response = new ApiResponse(Map.of("cart",cartInfo));
+        ApiResponse response = new ApiResponse(Map.of("cart",List.of(cartInfo)));
         return ResponseEntity.ok(response);
     }
     
