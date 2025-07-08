@@ -539,7 +539,7 @@ paths:
           $ref: "#/components/responses/UnauthorizedError"
         '403':
           $ref: "#/components/responses/forbiddenError"
-  /orders:
+  /orders/me:
     get:
       tags:
         - orders

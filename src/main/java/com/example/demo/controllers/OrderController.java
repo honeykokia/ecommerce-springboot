@@ -3,17 +3,30 @@ package com.example.demo.controllers;
 import java.util.List;
 import java.util.Map;
 
+<<<<<<< HEAD
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+=======
+import org.apache.catalina.connector.Response;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+>>>>>>> 8673665 (Feat/order controller (#11))
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.CheckoutRequest;
+<<<<<<< HEAD
 import com.example.demo.dto.OrderDetailInfo;
 import com.example.demo.dto.OrderInfo;
 import com.example.demo.responses.ApiResponse;
 
+=======
+import com.example.demo.dto.OrderInfo;
+import com.example.demo.responses.ApiResponse;
+
+import org.springframework.web.bind.annotation.RequestParam;
+>>>>>>> 8673665 (Feat/order controller (#11))
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
