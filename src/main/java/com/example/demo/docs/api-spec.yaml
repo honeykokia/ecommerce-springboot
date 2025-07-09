@@ -650,7 +650,7 @@ paths:
                       data:
                         type: object
                         properties:
-                          orderDetails:
+                          items:
                             type: array
                             items:
                               $ref: "#/components/schemas/OrderDetailInfo"
