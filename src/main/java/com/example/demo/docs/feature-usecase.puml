@@ -40,10 +40,22 @@ package Order{
     usecase "訂單詳情" <<design>> as OrderDetail
 }
 
+package Event{
+  usecase "查看活動" <<design>> as ViewEvent
+}
+
 package AdminPanel{
-    usecase "商品管理" <<design>> as ProductManagement
-    usecase "訂單管理" <<design>> as OrderManagement
-    usecase "會員管理" <<design>> as MemberManagement
+    usecase "商品新增" <<design>> as AddProduct
+    usecase "商品編輯" <<design>> as EditProduct
+    usecase "商品刪除" <<design>> as DeleteProduct
+    usecase "訂單編輯" <<design>> as EditOrder
+    usecase "訂單刪除" <<design>> as DeleteOrder
+    usecase "會員列表" <<design>> as MemberList
+    usecase "會員狀態編輯" <<design>> as EditMemberStatus
+    usecase "活動新增" <<design>> as AddEvent
+    usecase "活動編輯" <<design>> as EditEvent
+    usecase "活動刪除" <<design>> as DeleteEvent
+
 }
 
 package Payment{
@@ -73,10 +85,18 @@ guest --> ProductList
 guest --> ProductDetail
 guest --> ProductCategory
 guest --> SearchProduct
+guest --> ViewEvent
 
-admin --> ProductManagement
-admin --> OrderManagement
-admin --> MemberManagement
-
+admin --> AddProduct
+admin --> EditProduct
+admin --> DeleteProduct
+admin --> EditOrder
+admin --> DeleteOrder
+admin --> AddMember
+admin --> EditMember
+admin --> DeleteMember
+admin --> AddEvent
+admin --> EditEvent
+admin --> DeleteEvent
 
 @enduml
