@@ -729,12 +729,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                status:
-                  type: string
-                  enum: [ACTIVE, INACTIVE, BANNED]
-                  example: ACTIVE
+              $ref: "#/components/schemas/UpdateUserStatusRequest"
       responses:
         '200':
           description: "更新使用者狀態成功"
@@ -1213,6 +1208,13 @@ components:
         quantity:
           type: integer
           example: 2
+    UpdateUserStatusRequest:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ACTIVE, INACTIVE, BANNED]
+          example: ACTIVE
     ErrorInfo:
       type: object
       properties:
