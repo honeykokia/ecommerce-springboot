@@ -9,7 +9,7 @@ public class ProductInfo {
     private Long categoryId;
     private String name;
     private Integer price;
-    private String imageURL;
+    private String imageUrl;
     private Integer inStock;
     private Double rating;
     private Integer soldCount;

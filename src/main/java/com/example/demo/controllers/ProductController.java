@@ -28,7 +28,7 @@ public class ProductController {
         productInfo.setPrice(2000);
         productInfo.setCategoryId(1L);
         productInfo.setPromotionId(1L);
-        productInfo.setImageURL("/upload/defaultProduct.jpg");
+        productInfo.setImageUrl("/upload/defaultProduct.jpg");
         productInfo.setInStock(20);
         productInfo.setRating(4.5);
         productInfo.setSoldCount(36);
@@ -48,7 +48,7 @@ public class ProductController {
         productInfo.setPrice(2000);
         productInfo.setCategoryId(1L);
         productInfo.setPromotionId(1L);
-        productInfo.setImageURL("/upload/defaultProduct.jpg");
+        productInfo.setImageUrl("/upload/defaultProduct.jpg");
         productInfo.setInStock(20);
         productInfo.setRating(4.5);
         productInfo.setSoldCount(36);
