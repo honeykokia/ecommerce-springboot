@@ -12,6 +12,7 @@ public class OrderInfo {
     private String status;
     private String paymentMethod;
     private Boolean isPaid;
+    private LocalDateTime cancelledAt;
     private LocalDateTime paidAt;
     private String shippingMethod;
     private String shippingAddress;
