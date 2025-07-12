@@ -353,7 +353,47 @@ paths:
           $ref: "#/components/responses/UnauthorizedError"
         '403':
           $ref: "#/components/responses/forbiddenError"
-    
+  /categories:
+    get:
+      tags:
+        - categories
+      summary: "商品分類列表"
+      description: "取得商品分類列表"
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: "取得商品分類列表成功"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          categories:
+                            type: array
+                            items:
+                              $ref: "#/components/schemas/CategoryInfo"
+        '400':
+          description: "取得商品分類列表失敗"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                timestamp: "2025-06-23T14:00:00"
+                data:
+                  errors:
+                    general: "連線異常請重新登入"
+        '401':
+          $ref: "#/components/responses/UnauthorizedError"
+        '403':
+          $ref: "#/components/responses/forbiddenError"
+
   /carts/me:
     get:
       tags:
@@ -1333,6 +1373,9 @@ components:
         name:
           type: string
           example: 耳機
+        description:
+          type: string
+          example: "各式藍芽耳機"
     CartInfo:
       type: object
       properties:
