@@ -36,6 +36,14 @@ entity "Product" as Product {
     soldCount: int
     shortDescription: string
 }
+entity "CartItem" as CartItem {
+    *id: long <<generated>>
+    ---
+    cartId: long <<FK>>
+    productId: long <<FK>>
+    quantity: int <<non-negative>>
+    unitPrice: int
+}
 
 entity "Cart" as Cart {
     *id: long <<generated>>
@@ -98,6 +106,13 @@ entity "Payment" as Payment {
     updatedAt: datetime
 }
 
+entity "Category" as Category {
+    *id: long <<generated>>
+    ---
+    name: string
+    description: string <<nullable>>
+}
+
 entity "Tags" as Tag{
     *id: long <<generated>>
     ---
@@ -111,8 +126,10 @@ entity "ProductTags" as ProductTag {
 Tag }|--|{ ProductTag
 ProductTag }|--|| Product
 Cart }|--|| User
-Cart }|--|| Product
+Cart ||--|{ CartItem
+CartItem }|--|| Product
 Order }|--|| User
 Product }|--|| Promotion
+Product }|--|| Category
 Payment }|--|| Order
 @enduml
