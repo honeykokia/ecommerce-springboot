@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.dto.UpdateUserStatusRequest;
 import com.example.demo.dto.UserInfo;
 import com.example.demo.dto.ProductInfo;
+import com.example.demo.dto.CategoryInfo;
 import com.example.demo.dto.OrderInfo;
 import com.example.demo.dto.UpdateOrderRequest;
 import com.example.demo.responses.ApiResponse;
@@ -90,6 +91,24 @@ public class AdminController {
 
     @DeleteMapping("/orders/{orderId}")
     public ResponseEntity<?> deleteOrder(@PathVariable Long orderId) {
+        ApiResponse response = new ApiResponse(new HashMap<>());
+        return ResponseEntity.ok().body(response);
+    }
+
+    @PostMapping("/categories")
+    public ResponseEntity<?> createCategory(@RequestBody CategoryInfo categoryInfo) {
+        ApiResponse response = new ApiResponse(new HashMap<>());
+        return ResponseEntity.ok().body(response);
+    }
+
+    @PutMapping("/categories/{categoryId}")
+    public ResponseEntity<?> updateCategory(@PathVariable Long categoryId, @RequestBody CategoryInfo categoryInfo) {
+        ApiResponse response = new ApiResponse(new HashMap<>());
+        return ResponseEntity.ok().body(response);
+    }
+
+    @DeleteMapping("/categories/{categoryId}")
+    public ResponseEntity<?> deleteCategory(@PathVariable Long categoryId) {
         ApiResponse response = new ApiResponse(new HashMap<>());
         return ResponseEntity.ok().body(response);
     }
