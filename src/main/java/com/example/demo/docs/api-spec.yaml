@@ -17,7 +17,7 @@ tags:
     description: "購物車相關操作"
   - name: orders
     description: "訂單相關操作"
-  - name: events
+  - name: promotions
     description: "活動相關操作"
   - name: admin
     description: "管理員相關操作"
@@ -669,6 +669,46 @@ paths:
           $ref: "#/components/responses/UnauthorizedError"
         '403':
           $ref: "#/components/responses/forbiddenError"
+  /promotions:
+    get:
+      tags:
+        - promotions
+      summary: "活動列表"
+      description: "取得目前的活動列表"
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: "取得活動列表成功"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          promotions:
+                            type: array
+                            items:
+                              $ref: "#/components/schemas/PromotionInfo"
+        '400':
+          description: "取得活動列表失敗"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+              example:
+                timestamp: "2025-06-23T14:00:00"
+                data:
+                  errors:
+                    general: "連線異常請重新登入"
+        '401':
+          $ref: "#/components/responses/UnauthorizedError"
+        '403':
+          $ref: "#/components/responses/forbiddenError"
   /admin/users:
     get:
       tags:
@@ -1300,7 +1340,8 @@ components:
           example: "這是最新款的藍芽耳機，目前折價9折熱賣中"
         tags:
           type: array
-          example: ["熱賣","新品"]
+          items:
+            $ref: "#/components/schemas/TagInfo"
     CategoryInfo:
       type: object
       properties:
@@ -1325,7 +1366,7 @@ components:
         quantity:
           type: integer
           example: 2
-        price:
+        unitPrice:
           type: integer
           example: 2000
         createAt:
@@ -1382,6 +1423,12 @@ components:
         paidAt:
           type: string
           format: date-time
+          nullable: true
+          example: "2025-06-23T14:00:00"
+        cancelledAt:
+          type: string
+          format: date-time
+          nullable: true
           example: "2025-06-23T14:00:00"
         shippingMethod:
           type: string
@@ -1403,7 +1450,16 @@ components:
           type: string
           format: date-time
           example: "2025-06-23T14:00:00"
-    EventInfo:
+    TagInfo:
+      type: object
+      properties:
+        id:
+          type: long
+          example: 1
+        name:
+          type: string
+          example: "熱賣"
+    PromotionInfo:
       type: object
       properties:
         id:

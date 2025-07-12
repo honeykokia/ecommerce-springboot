@@ -40,7 +40,7 @@ package Order{
     usecase "訂單詳情" <<design>> as OrderDetail
 }
 
-package Event{
+package Promotion{
   usecase "查看活動" <<design>> as ViewEvent
 }
 
@@ -87,14 +87,13 @@ guest --> ProductCategory
 guest --> SearchProduct
 guest --> ViewEvent
 
+admin --> MemberList
+admin --> EditMemberStatus
 admin --> AddProduct
 admin --> EditProduct
 admin --> DeleteProduct
 admin --> EditOrder
 admin --> DeleteOrder
-admin --> AddMember
-admin --> EditMember
-admin --> DeleteMember
 admin --> AddEvent
 admin --> EditEvent
 admin --> DeleteEvent

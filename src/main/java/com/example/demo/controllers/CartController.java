@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -33,7 +32,7 @@ public class CartController {
         cartInfo.setId(1L);
         cartInfo.setUserId(1L);
         cartInfo.setQuantity(2);
-        cartInfo.setPrice(2000);
+        cartInfo.setUnitPrice(2000);
         cartInfo.setCreatedAt(java.time.LocalDateTime.now());
         cartInfo.setUpdatedAt(java.time.LocalDateTime.now());
         ApiResponse response = new ApiResponse(Map.of("cart",List.of(cartInfo)));

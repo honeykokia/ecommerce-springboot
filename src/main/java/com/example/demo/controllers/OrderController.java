@@ -32,11 +32,15 @@ public class OrderController {
         orderInfo.setStatus("PENDING");
         orderInfo.setPaymentMethod("CREDIT_CARD");
         orderInfo.setIsPaid(false);
+        orderInfo.setPaidAt(null);
+        orderInfo.setCancelledAt(null);
+        orderInfo.setShippingMethod("STANDARD");
         orderInfo.setShippingAddress("台北市中正區某某路123號");
         orderInfo.setShippingStatus("PENDING");
         orderInfo.setTotalPrice(4000L);
         orderInfo.setCreatedAt(java.time.LocalDateTime.now());
         orderInfo.setUpdatedAt(java.time.LocalDateTime.now());
+
         ApiResponse response = new ApiResponse(Map.of("order", List.of(orderInfo)));
         return ResponseEntity.ok(response);
     }
@@ -52,6 +56,9 @@ public class OrderController {
         orderInfo.setStatus("PENDING");
         orderInfo.setPaymentMethod("CREDIT_CARD");
         orderInfo.setIsPaid(false);
+        orderInfo.setPaidAt(null);
+        orderInfo.setCancelledAt(null);
+        orderInfo.setShippingMethod("STANDARD");
         orderInfo.setShippingAddress("台北市中正區某某路123號");
         orderInfo.setShippingStatus("PENDING");
         orderInfo.setTotalPrice(4000L);
