@@ -13,6 +13,7 @@ public class OrderInfo {
     private String paymentMethod;
     private Boolean isPaid;
     private LocalDateTime paidAt;
+    private String shippingMethod;
     private String shippingAddress;
     private String shippingStatus;
     private Long totalPrice;
