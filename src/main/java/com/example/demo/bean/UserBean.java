@@ -5,6 +5,8 @@ import lombok.Data;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import com.example.demo.enums.UserRole;
+
 @Entity
 @Table(name = "users")
 @Data

@@ -4,6 +4,11 @@ import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
 
+import com.example.demo.enums.OrderStatus;
+import com.example.demo.enums.PaymentMethod;
+import com.example.demo.enums.ShippingMethod;
+import com.example.demo.enums.ShippingStatus;
+
 @Entity
 @Table(name = "orders")
 @Data
@@ -12,9 +17,7 @@ public class OrderBean {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
-    
+
     @Column(name = "order_number", nullable = false, unique = true)
     private String orderNumber;
     

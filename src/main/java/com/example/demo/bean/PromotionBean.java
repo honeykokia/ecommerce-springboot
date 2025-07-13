@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDate;
 
+import com.example.demo.enums.DiscountType;
+
 @Entity
 @Table(name = "promotions")
 @Data

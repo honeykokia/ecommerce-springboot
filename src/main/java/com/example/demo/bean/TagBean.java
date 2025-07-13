@@ -14,3 +14,4 @@ public class TagBean {
     @Column(nullable = false)
     private String name;
 }
+
