@@ -49,7 +49,6 @@ entity "Cart" as Cart {
     *id: long <<generated>>
     ---
     userId: long <<FK>>
-    productId: long <<FK>>
     quantity: int <<non-negative>>
     unitPrice: int
     createdAt: datetime
@@ -95,7 +94,7 @@ entity "Promotion" as Promotion {
 entity "Payment" as Payment {
     *id: long <<generated>>
     ---
-    orderId: long <<FK>>
+    orderId: long <<FK, unique>>
     paymentMethod: string <<enum>> 
     'CREDIT_CARD, PAYPAL, BANK_TRANSFER
     status: string <<enum>>
@@ -131,5 +130,5 @@ CartItem }|--|| Product
 Order }|--|| User
 Product }|--|| Promotion
 Product }|--|| Category
-Payment }|--|| Order
+Payment ||--|| Order
 @enduml

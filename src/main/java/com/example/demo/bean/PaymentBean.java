@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
 
+import com.example.demo.enums.PaymentMethod;
+import com.example.demo.enums.PaymentStatus;
+
 @Entity
 @Table(name = "payments")
 @Data
@@ -11,9 +14,6 @@ public class PaymentBean {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
-    @Column(name = "order_id", nullable = false)
-    private Long orderId;
     
     @Enumerated(EnumType.STRING)
     @Column(name = "payment_method", nullable = false)
@@ -36,7 +36,7 @@ public class PaymentBean {
     private LocalDateTime updatedAt;
     
     // Foreign key relationship
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id", insertable = false, updatable = false)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id", unique = true, insertable = false, updatable = false)
     private OrderBean order;
 }
