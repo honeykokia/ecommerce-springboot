@@ -11,12 +11,6 @@ public class ProductBean {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Column(name = "promotion_id")
-    private Long promotionId;
-    
-    @Column(name = "category_id", nullable = false)
-    private Long categoryId;
-    
     @Column(nullable = false)
     private String name;
     
