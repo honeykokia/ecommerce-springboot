@@ -10,10 +10,16 @@ import com.example.demo.dto.UpdatePasswordRequest;
 import com.example.demo.dto.UpdateUserRequest;
 import com.example.demo.dto.UserInfo;
 import com.example.demo.responses.ApiResponse;
+import com.example.demo.services.UserService;
+import com.example.demo.utils.VaildationHelper;
 
+import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,6 +35,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 @RequestMapping("/users")
 public class UserController {
 
+    @Autowired
+    private VaildationHelper validationHelper;
+    @Autowired
+    private UserService userService;
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
 
@@ -41,13 +52,16 @@ public class UserController {
         return ResponseEntity.ok().body(response);
     }
 
+    /*
+     * 註冊新用戶 <Complete>
+     * @Valid 用於驗證 RegisterRequest 中的字段
+     * BindingResult 用於捕獲驗證錯誤
+     */
+    @Transactional
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterRequest registerRequest) {
-        UserInfo userInfo = new UserInfo();
-        userInfo.setName("Test");
-        userInfo.setEmail("test@gmail.com");
-
-        ApiResponse response = new ApiResponse(userInfo);
+    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest registerRequest, BindingResult result) {
+        validationHelper.validateOrThrow(result);
+        ApiResponse response = userService.register(registerRequest);
         return ResponseEntity.ok().body(response);
     }
     

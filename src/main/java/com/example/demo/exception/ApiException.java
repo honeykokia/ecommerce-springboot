@@ -13,7 +13,7 @@ public class ApiException extends RuntimeException {
     public ApiException(String message, int statusCode, ErrorInfo errorInfo) {
         super(message);
         this.statusCode = statusCode;
-        this.data = errorInfo != null ? Map.of("errors",errorInfo.getErrors()) : null;
+        this.data = errorInfo != null ? Map.of("errors",errorInfo.getAll()) : null;
     }
 
     public int getStatusCode() {

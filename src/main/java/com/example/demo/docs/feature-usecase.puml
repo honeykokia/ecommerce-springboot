@@ -3,6 +3,7 @@ left to right direction
 skinparam packageStyle rectangle
 skinparam usecase {
   BackgroundColor<<design>> LightPink
+  BackgroundColor<<complete>> LightGreen
   BorderColor black
 }
 
@@ -13,7 +14,7 @@ actor admin
 
 package User{
     usecase "登入" <<design>> as Login
-    usecase "註冊" <<design>> as Register
+    usecase "註冊" <<complete>> as Register
     usecase "忘記密碼" <<design>> as ForgetPw
     usecase "個人資料" <<design>> as Profile
     usecase "編輯個人資料" <<design>> as EditProfile
