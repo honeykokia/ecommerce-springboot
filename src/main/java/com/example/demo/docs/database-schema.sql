@@ -1,22 +1,26 @@
-CREATE TABLE promotions (
+CREATE TABLE users (
     id SERIAL PRIMARY KEY,
-    name VARCHAR NOT NULL,
-    discount_type discount_type NOT NULL,
-    discount_value INT NOT NULL,
-    description VARCHAR,
-    image_url VARCHAR,
-    is_active BOOLEAN NOT NULL,
-    start_date DATE NOT NULL,
-    end_date DATE NOT NULL
+    name VARCHAR(100) NOT NULL UNIQUE,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    gender SMALLINT NOT NULL,
+    birthday DATE,
+    phone VARCHAR(20) NOT NULL,
+    city VARCHAR(100) NOT NULL,
+    country VARCHAR(100) NOT NULL,
+    address VARCHAR(255) NOT NULL,
+    role VARCHAR(50) NOT NULL,
+    created_at TIMESTAMP NOT NULL,
+    last_login_at TIMESTAMP NOT NULL
 );
 
 CREATE TABLE promotions (
     id SERIAL PRIMARY KEY,
-    name VARCHAR NOT NULL,
-    discount_type discount_type NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    discount_type VARCHAR(50) NOT NULL,
     discount_value INT NOT NULL,
-    description VARCHAR,
-    image_url VARCHAR,
+    description VARCHAR(255),
+    image_url VARCHAR(255),
     is_active BOOLEAN NOT NULL,
     start_date DATE NOT NULL,
     end_date DATE NOT NULL
@@ -24,19 +28,19 @@ CREATE TABLE promotions (
 
 CREATE TABLE categories (
     id SERIAL PRIMARY KEY,
-    name VARCHAR NOT NULL,
-    description VARCHAR
+    name VARCHAR(100) NOT NULL,
+    description VARCHAR(255)
 );
 
 CREATE TABLE products (
     id SERIAL PRIMARY KEY,
-    name VARCHAR NOT NULL,
+    name VARCHAR(100) NOT NULL,
     price INT NOT NULL,
-    image_url VARCHAR,
+    image_url VARCHAR(255),
     in_stock INT NOT NULL,
     rating DOUBLE PRECISION,
     sold_count INT,
-    short_description VARCHAR,
+    short_description VARCHAR(300),
     promotion_id INT,
     category_id INT,
     FOREIGN KEY (promotion_id) REFERENCES promotions (id) ON DELETE SET NULL,
@@ -45,15 +49,15 @@ CREATE TABLE products (
 
 CREATE TABLE orders (
     id SERIAL PRIMARY KEY,
-    order_number VARCHAR NOT NULL UNIQUE,
-    status VARCHAR NOT NULL, -- 存儲 OrderStatus 枚舉值
-    payment_method VARCHAR NOT NULL, -- 存儲 PaymentMethod 枚舉值
+    order_number VARCHAR(100) NOT NULL UNIQUE,
+    status VARCHAR(50) NOT NULL, -- 存儲 OrderStatus 枚舉值
+    payment_method VARCHAR(50) NOT NULL, -- 存儲 PaymentMethod 枚舉值
     is_paid BOOLEAN NOT NULL,
     paid_at TIMESTAMP NULL,
     cancelled_at TIMESTAMP NULL,
-    shipping_method VARCHAR NOT NULL, -- 存儲 ShippingMethod 枚舉值
-    shipping_address VARCHAR NOT NULL,
-    shipping_status VARCHAR NOT NULL, -- 存儲 ShippingStatus 枚舉值
+    shipping_method VARCHAR(50) NOT NULL, -- 存儲 ShippingMethod 枚舉值
+    shipping_address VARCHAR(255) NOT NULL,
+    shipping_status VARCHAR(50) NOT NULL, -- 存儲 ShippingStatus 枚舉值
     total_price INT NOT NULL,
     created_at TIMESTAMP,
     updated_at TIMESTAMP,
@@ -82,10 +86,10 @@ CREATE TABLE cart_items (
 
 CREATE TABLE payments (
     id SERIAL PRIMARY KEY,
-    payment_method VARCHAR NOT NULL, -- 存儲 PaymentMethod 枚舉值
-    status VARCHAR NOT NULL, -- 存儲 PaymentStatus 枚舉值
+    payment_method VARCHAR(50) NOT NULL, -- 存儲 PaymentMethod 枚舉值
+    status VARCHAR(50) NOT NULL, -- 存儲 PaymentStatus 枚舉值
     amount INT NOT NULL,
-    transaction_id VARCHAR,
+    transaction_id VARCHAR(100),
     created_at TIMESTAMP,
     updated_at TIMESTAMP,
     order_id INT UNIQUE,
