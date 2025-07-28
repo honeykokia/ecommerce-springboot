@@ -1,17 +1,24 @@
 package com.example.demo.dto;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 public class ErrorInfo {
-    private Map<String, String> errors;
+    private final Map<String, String> errors;
 
-    public ErrorInfo(Map<String, String> errors) {
-        this.errors = errors;
+    public ErrorInfo() {
+        this.errors = new HashMap<>();
     }
-    public Map<String, String> getErrors() {
-        return errors;
+    public void addError(String field, String message) {
+        this.errors.put(field, message);
     }
-    public void setErrors(Map<String, String> errors) {
-        this.errors = errors;
+
+    public boolean hasErrors() {
+        return !errors.isEmpty();
+    }
+
+    public Map<String, String> getAll() {
+        return Collections.unmodifiableMap(errors);
     }
 }
