@@ -1167,11 +1167,15 @@ components:
       required:
         - email
         - password
+        - confirmPassword
       properties:
         email:
           type: string
           example: "Test@gmail.com"
         password:
+          type: string
+          example: Aa123456
+        confirmPassword:
           type: string
           example: Aa123456
     UpdateUserRequest:

@@ -17,6 +17,8 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -48,7 +50,7 @@ public class UserController {
         loginInfo.setEmail("test@gmail.com");
         loginInfo.setToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c");
 
-        ApiResponse response = new ApiResponse(loginInfo);
+        ApiResponse response = new ApiResponse(Map.of("user", loginInfo));
         return ResponseEntity.ok().body(response);
     }
 
