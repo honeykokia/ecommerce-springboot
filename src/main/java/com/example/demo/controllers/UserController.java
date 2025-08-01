@@ -3,7 +3,6 @@ package com.example.demo.controllers;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.dto.LoginInfo;
 import com.example.demo.dto.LoginRequest;
 import com.example.demo.dto.RegisterRequest;
 import com.example.demo.dto.UpdatePasswordRequest;
@@ -17,8 +16,6 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -28,8 +25,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
-
-
 
 
 @Slf4j
@@ -42,15 +37,19 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    /*
+     * 用戶登入
+     * @Valid 用於驗證 LoginRequest 中的字段
+     * @param loginRequest
+     * @param result
+     * @return
+     */
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest , BindingResult result) {
 
-        LoginInfo loginInfo = new LoginInfo();
-        loginInfo.setName("Test");
-        loginInfo.setEmail("test@gmail.com");
-        loginInfo.setToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c");
-
-        ApiResponse response = new ApiResponse(Map.of("user", loginInfo));
+        validationHelper.validateOrThrow(result);
+    
+        ApiResponse response = userService.login(loginRequest);
         return ResponseEntity.ok().body(response);
     }
 
