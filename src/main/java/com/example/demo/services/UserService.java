@@ -2,17 +2,21 @@ package com.example.demo.services;
 
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.bean.UserBean;
+import com.example.demo.dto.ErrorInfo;
 import com.example.demo.dto.LoginInfo;
 import com.example.demo.dto.LoginRequest;
 import com.example.demo.dto.RegisterRequest;
 import com.example.demo.dto.UserInfo;
+import com.example.demo.dto.UserProfileInfo;
 import com.example.demo.enums.UserRole;
+import com.example.demo.exception.ApiException;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.responses.ApiResponse;
 import com.example.demo.utils.JwtUtil;
@@ -73,5 +77,28 @@ public class UserService {
 
         return new ApiResponse(Map.of("user", userInfo));
 
+    }
+
+    public ApiResponse getProfile(Long userId) {
+
+        Optional<UserBean> user = userRepository.findById(userId);
+        if (user.isEmpty()) {
+            ErrorInfo errorInfo = new ErrorInfo();
+            errorInfo.addError("user", "Connection abnormal");
+            throw new ApiException("User not found", 404, errorInfo);
+        }
+
+        UserProfileInfo userInfo = new UserProfileInfo();
+        userInfo.setName(user.get().getName());
+        userInfo.setEmail(user.get().getEmail());
+        userInfo.setImage(user.get().getImage());
+        userInfo.setGender(user.get().getGender());
+        userInfo.setBirthday(user.get().getBirthday());
+        userInfo.setPhone(user.get().getPhone());
+        userInfo.setCity(user.get().getCity());
+        userInfo.setCountry(user.get().getCountry());
+        userInfo.setAddress(user.get().getAddress());
+
+        return new ApiResponse(Map.of("user", userInfo));
     }
 }
