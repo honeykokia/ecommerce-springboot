@@ -3,6 +3,7 @@ package com.example.demo.controllers;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.dto.ForgetPasswordRequest;
 import com.example.demo.dto.LoginRequest;
 import com.example.demo.dto.RegisterRequest;
 import com.example.demo.dto.UpdatePasswordRequest;
@@ -18,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -67,12 +69,9 @@ public class UserController {
     }
     
     @GetMapping("/me")
-    public ResponseEntity<?> getProfile() {
-        UserInfo userInfo = new UserInfo();
-        userInfo.setName("Test");
-        userInfo.setEmail("test@gmail.com");
+    public ResponseEntity<?> getProfile(@AuthenticationPrincipal Long userId) {
 
-        ApiResponse response = new ApiResponse(userInfo);
+        ApiResponse response = userService.getProfile(userId);
         return ResponseEntity.ok().body(response);
     }
     
@@ -89,6 +88,14 @@ public class UserController {
         ApiResponse response = new ApiResponse(null);
         return ResponseEntity.ok().body(response);
     }
+
+    @PostMapping("/forget-password")
+    public ResponseEntity<?> forgetPassword(@Valid @RequestBody ForgetPasswordRequest request) {
+
+        ApiResponse response =new ApiResponse(null);
+        return ResponseEntity.ok().body(response);
+    }
+    
 
     @GetMapping("/verify/{token}")
     public ResponseEntity<?> verifyEmail(@PathVariable String token) {
