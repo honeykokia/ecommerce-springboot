@@ -9,7 +9,7 @@ public class CartInfo {
     private Long id;
     private Long userId;
     private Integer quantity;
-    private Integer price;
+    private Integer unitPrice;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
