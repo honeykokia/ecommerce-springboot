@@ -13,6 +13,8 @@ import com.example.demo.dto.ErrorInfo;
 import com.example.demo.dto.LoginInfo;
 import com.example.demo.dto.LoginRequest;
 import com.example.demo.dto.RegisterRequest;
+import com.example.demo.dto.UpdatePasswordRequest;
+import com.example.demo.dto.UpdateUserRequest;
 import com.example.demo.dto.UserInfo;
 import com.example.demo.dto.UserProfileInfo;
 import com.example.demo.enums.UserRole;
@@ -20,6 +22,8 @@ import com.example.demo.exception.ApiException;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.responses.ApiResponse;
 import com.example.demo.utils.JwtUtil;
+import com.example.demo.vaildator.ChangePasswordValidator;
+import com.example.demo.vaildator.EditProfileValidator;
 import com.example.demo.vaildator.LoginValidator;
 
 @Service
@@ -30,6 +34,12 @@ public class UserService {
 
     @Autowired
     private LoginValidator loginValidator;
+
+    @Autowired
+    private ChangePasswordValidator changePasswordValidator;
+
+    @Autowired
+    private EditProfileValidator editProfileValidator;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -100,5 +110,33 @@ public class UserService {
         userInfo.setAddress(user.get().getAddress());
 
         return new ApiResponse(Map.of("user", userInfo));
+    }
+
+    public ApiResponse editProfile(UpdateUserRequest updateUserRequest) {
+
+        UserBean userBean = editProfileValidator.validate(updateUserRequest);
+        userBean.setName(updateUserRequest.getName());
+        userBean.setImage(updateUserRequest.getImage());
+        userBean.setGender(updateUserRequest.getGender());
+        userBean.setBirthday(updateUserRequest.getBirthday());
+        userBean.setPhone(updateUserRequest.getPhone());
+        userBean.setCity(updateUserRequest.getCity());
+        userBean.setCountry(updateUserRequest.getCountry());
+        userBean.setAddress(updateUserRequest.getAddress());
+
+        userRepository.save(userBean);
+
+        return new ApiResponse(Map.of("message", "Profile updated successfully"));
+
+    }
+
+    public ApiResponse changePassword(UpdatePasswordRequest updatePasswordRequest) {
+        UserBean user = changePasswordValidator.validate(updatePasswordRequest);
+
+        String encodedPassword = passwordEncoder.encode(updatePasswordRequest.getNewPassword());
+        user.setPassword(encodedPassword);
+        userRepository.save(user);
+
+        return new ApiResponse(Map.of("message", "Password changed successfully"));
     }
 }
