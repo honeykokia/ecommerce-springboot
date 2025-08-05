@@ -31,6 +31,13 @@ public class ProductBean {
     @Column(name = "short_description")
     private String shortDescription;
     
+    // Foreign key columns
+    @Column(name = "category_id")
+    private Long categoryId;
+    
+    @Column(name = "promotion_id")
+    private Long promotionId;
+    
     // Foreign key relationships
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "promotion_id", insertable = false, updatable = false)
