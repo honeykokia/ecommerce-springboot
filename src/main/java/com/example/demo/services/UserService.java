@@ -10,10 +10,12 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.bean.UserBean;
 import com.example.demo.dto.ErrorInfo;
+import com.example.demo.dto.ForgetPasswordRequest;
 import com.example.demo.dto.LoginInfo;
 import com.example.demo.dto.LoginRequest;
 import com.example.demo.dto.RegisterRequest;
 import com.example.demo.dto.UpdatePasswordRequest;
+import com.example.demo.dto.UpdateUserAvatarRequqst;
 import com.example.demo.dto.UpdateUserRequest;
 import com.example.demo.dto.UserInfo;
 import com.example.demo.dto.UserProfileInfo;
@@ -22,9 +24,11 @@ import com.example.demo.exception.ApiException;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.responses.ApiResponse;
 import com.example.demo.utils.JwtUtil;
+import com.example.demo.utils.ResetTokenGenerator;
 import com.example.demo.vaildator.ChangePasswordValidator;
-import com.example.demo.vaildator.EditProfileValidator;
+import com.example.demo.vaildator.ForgetPasswordValidator;
 import com.example.demo.vaildator.LoginValidator;
+import com.example.demo.vaildator.UpdateAvatarValidator;
 
 @Service
 public class UserService {
@@ -39,10 +43,19 @@ public class UserService {
     private ChangePasswordValidator changePasswordValidator;
 
     @Autowired
-    private EditProfileValidator editProfileValidator;
+    private UpdateAvatarValidator updateAvatarValidator;
+
+    @Autowired
+    private ForgetPasswordValidator forgetPasswordValidator;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private EmailService emailService;
+
+    @Autowired
+    private ResetTokenGenerator resetTokenGenerator;
 
     @Autowired
     private JwtUtil jwtUtil;
@@ -113,10 +126,14 @@ public class UserService {
     }
 
     public ApiResponse editProfile(UpdateUserRequest updateUserRequest) {
+        ErrorInfo errorInfo = new ErrorInfo();
+        UserBean userBean = userRepository.findById(updateUserRequest.getUserId())
+        .orElseThrow(() -> {
+            errorInfo.addError("userId", "Connection abnormal");
+            return new ApiException("User not found", 404, errorInfo);
+        });
 
-        UserBean userBean = editProfileValidator.validate(updateUserRequest);
         userBean.setName(updateUserRequest.getName());
-        userBean.setImage(updateUserRequest.getImage());
         userBean.setGender(updateUserRequest.getGender());
         userBean.setBirthday(updateUserRequest.getBirthday());
         userBean.setPhone(updateUserRequest.getPhone());
@@ -126,8 +143,16 @@ public class UserService {
 
         userRepository.save(userBean);
 
-        return new ApiResponse(Map.of("message", "Profile updated successfully"));
+        return new ApiResponse(null);
 
+    }
+    public ApiResponse updateAvatar(UpdateUserAvatarRequqst updateUserAvatarRequqst) {
+
+        UserBean user = updateAvatarValidator.validate(updateUserAvatarRequqst);
+        user.setImage(updateUserAvatarRequqst.getImage());
+        userRepository.save(user);
+
+        return new ApiResponse(null);
     }
 
     public ApiResponse changePassword(UpdatePasswordRequest updatePasswordRequest) {
@@ -138,5 +163,14 @@ public class UserService {
         userRepository.save(user);
 
         return new ApiResponse(Map.of("message", "Password changed successfully"));
+    }
+
+    public ApiResponse forgetPassword(ForgetPasswordRequest request) {
+        UserBean user = forgetPasswordValidator.validate(request);
+        String token = resetTokenGenerator.generate().getToken();
+        String verifyLink = "http://localhost:8080/users/verify/" + token;
+        emailService.sendSimpleMail(user.getEmail(), "Ecommerce Reset Password", "您好，請點擊以下連結以重設您的密碼：\n" + verifyLink);
+
+        return new ApiResponse(null);
     }
 }

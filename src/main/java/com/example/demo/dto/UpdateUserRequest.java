@@ -17,10 +17,6 @@ public class UpdateUserRequest {
     @Schema(hidden = true)
     private Long userId;
 
-    @JsonIgnore
-    @Schema(hidden = true)
-    private MultipartFile file;
-
     @NotBlank(message = "Name is required")
     private String name;
     
@@ -32,10 +28,7 @@ public class UpdateUserRequest {
 
     @NotBlank(message = "phone is required")
     private String phone;
-
-    @NotBlank(message = "image is required")
-    private String image;
-
+    
     @NotBlank(message = "city is required")
     private String city;
 

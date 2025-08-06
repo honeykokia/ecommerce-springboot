@@ -1,6 +1,7 @@
 package com.example.demo.config;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +46,7 @@ public class JwtFilter extends OncePerRequestFilter{
         } catch (ExpiredJwtException | SignatureException | MalformedJwtException e) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json");
-            response.getWriter().write("{\"status\":\"error\", \"errors\":{\"token\":\"Token 無效或已過期\"}}");
+            response.getWriter().write("{\"timestamp\":\"" + LocalDateTime.now() + "\", \"data\":{\"errors\":{\"token\":\"Token is expired or invalid\"}}}");
             return;
         }
 

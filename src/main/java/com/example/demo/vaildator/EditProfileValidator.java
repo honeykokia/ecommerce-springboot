@@ -38,44 +38,44 @@ public class EditProfileValidator implements CustValidator<UpdateUserRequest, Us
             return new ApiException("User not found", 404, errorInfo);
         });
         
-        if(target.getFile() == null || target.getFile().isEmpty()) {
-            return user;
-        }
+        // if(target.getFile() == null || target.getFile().isEmpty()) {
+        //     return user;
+        // }
 
-        String originalFilename = target.getFile().getOriginalFilename();
-        if (originalFilename == null || originalFilename.isEmpty()) {
-            errorInfo.addError("file", "File name cannot be empty");
-        }else{
-            if (originalFilename.length() > 255) {
-                errorInfo.addError("file", "File name is too long");
-            }
+        // String originalFilename = target.getFile().getOriginalFilename();
+        // if (originalFilename == null || originalFilename.isEmpty()) {
+        //     errorInfo.addError("file", "File name cannot be empty");
+        // }else{
+        //     if (originalFilename.length() > 255) {
+        //         errorInfo.addError("file", "File name is too long");
+        //     }
 
-            String ext = originalFilename.substring(originalFilename.lastIndexOf("."));
-            if (!List.of(".jpg", ".jpeg", ".png", ".webp").contains(ext.toLowerCase())) {
-                errorInfo.addError("file", "File type must be jpg, jpeg, png, or webp");
-            }
-        }
-
-        
-        if (errorInfo.hasErrors()) {
-            throw new ApiException("Validation failed", 400, errorInfo);
-        }
-
-        String uploadDir = System.getProperty("user.dir") + "/upload/";
-        File folder = new File(uploadDir);
-        if (!folder.exists()) folder.mkdirs();
-
-        String filename = UUID.randomUUID() + "_" + target.getFile().getOriginalFilename();
-        Path path = Paths.get(uploadDir + filename);
-        try {
-            target.getFile().transferTo(path.toFile());
-        } catch (IOException e) {
-            errorInfo.addError("file", "File upload failed");
-            throw new ApiException("File upload failed", 500, errorInfo);
-        }
+        //     String ext = originalFilename.substring(originalFilename.lastIndexOf("."));
+        //     if (!List.of(".jpg", ".jpeg", ".png", ".webp").contains(ext.toLowerCase())) {
+        //         errorInfo.addError("file", "File type must be jpg, jpeg, png, or webp");
+        //     }
+        // }
 
         
-        target.setImage(filename);
+        // if (errorInfo.hasErrors()) {
+        //     throw new ApiException("Validation failed", 400, errorInfo);
+        // }
+
+        // String uploadDir = System.getProperty("user.dir") + "/upload/";
+        // File folder = new File(uploadDir);
+        // if (!folder.exists()) folder.mkdirs();
+
+        // String filename = UUID.randomUUID() + "_" + target.getFile().getOriginalFilename();
+        // Path path = Paths.get(uploadDir + filename);
+        // try {
+        //     target.getFile().transferTo(path.toFile());
+        // } catch (IOException e) {
+        //     errorInfo.addError("file", "File upload failed");
+        //     throw new ApiException("File upload failed", 500, errorInfo);
+        // }
+
+        
+        // target.setImage(filename);
         return user;
     }
 
