@@ -26,6 +26,8 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/users/login").permitAll()
                 .requestMatchers("/users/register").permitAll()
+                .requestMatchers("/users/forget-password").permitAll()
+                .requestMatchers("/users/verify/**").permitAll() // 允許忘記密碼驗證連結
                 .anyRequest().authenticated()
             )
             .csrf(csrf -> csrf.disable()) // 可選擇關閉 CSRF（特別是 API）
