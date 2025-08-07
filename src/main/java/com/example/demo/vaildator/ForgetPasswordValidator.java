@@ -7,7 +7,6 @@ import com.example.demo.dto.ErrorInfo;
 import com.example.demo.dto.ForgetPasswordRequest;
 import com.example.demo.exception.ApiException;
 import com.example.demo.repository.UserRepository;
-import com.example.demo.utils.JwtUtil;
 
 @Component
 public class ForgetPasswordValidator implements CustValidator<ForgetPasswordRequest,UserBean>{
@@ -27,7 +26,7 @@ public class ForgetPasswordValidator implements CustValidator<ForgetPasswordRequ
         // Perform validation logic here
         ErrorInfo errorInfo = new ErrorInfo();
         UserBean user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> {
-            errorInfo.addError("email", "Email doesn't exists: " + request.getEmail());
+            errorInfo.addError("email", "Email doesn't exists.");
             throw new ApiException("Email not found", 400,errorInfo);
         });
         return user;

@@ -1,14 +1,28 @@
 package com.example.demo.bean;
 
-import jakarta.persistence.*;
-import lombok.Data;
 import java.time.LocalDate;
 
 import com.example.demo.enums.DiscountType;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 @Entity
 @Table(name = "promotions")
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor // optional
 public class PromotionBean {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -14,7 +14,7 @@ public class ResetTokenGenerator {
     private int defaultDuration;
 
     /**
-     * 產生忘記密碼 token（預設 30 分鐘有效）
+     * 產生忘記密碼 token（預設 15 分鐘有效）
      */
     public ResetTokenData generate() {
         return generate(defaultDuration);
