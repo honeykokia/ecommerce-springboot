@@ -8,6 +8,7 @@ import com.example.demo.dto.ForgetPasswordRequest;
 import com.example.demo.exception.ApiException;
 import com.example.demo.repository.UserRepository;
 
+
 @Component
 public class ForgetPasswordValidator implements CustValidator<ForgetPasswordRequest,UserBean>{
 

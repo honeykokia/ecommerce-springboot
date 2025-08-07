@@ -27,6 +27,7 @@ import com.example.demo.repository.TokenRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.responses.ApiResponse;
 import com.example.demo.utils.JwtUtil;
+import com.example.demo.utils.ResetTokenGenerator;
 import com.example.demo.vaildator.ChangePasswordValidator;
 import com.example.demo.vaildator.ForgetPasswordValidator;
 import com.example.demo.vaildator.LoginValidator;
@@ -65,6 +66,7 @@ public class UserService {
 
     @Autowired
     private TokenService tokenService;
+
 
     @Autowired
     private JwtUtil jwtUtil;
@@ -166,6 +168,14 @@ public class UserService {
 
         return new ApiResponse(null);
     }
+    public ApiResponse updateAvatar(UpdateUserAvatarRequqst updateUserAvatarRequqst) {
+
+        UserBean user = updateAvatarValidator.validate(updateUserAvatarRequqst);
+        user.setImage(updateUserAvatarRequqst.getImage());
+        userRepository.save(user);
+
+        return new ApiResponse(null);
+    }
 
     public ApiResponse changePassword(UpdatePasswordRequest updatePasswordRequest) {
         UserBean user = changePasswordValidator.validate(updatePasswordRequest);
@@ -181,6 +191,7 @@ public class UserService {
         UserBean user = forgetPasswordValidator.validate(request);
         String token = tokenService.generateToken(user.getId());
         String verifyLink = frontendUrl[0] + "/reset-password?token=" + token;
+
         emailService.sendSimpleMail(user.getEmail(), "Ecommerce Reset Password", "您好，請點擊以下連結以重設您的密碼：\n" + verifyLink);
 
         return new ApiResponse(null);
@@ -192,4 +203,5 @@ public class UserService {
         tokenRepository.save(tokenBean);
         return new ApiResponse(null);
     }
+
 }

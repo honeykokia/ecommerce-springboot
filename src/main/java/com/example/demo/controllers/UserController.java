@@ -80,6 +80,7 @@ public class UserController {
     @PutMapping("/me")
     public ResponseEntity<?> editProfile(@Valid @AuthenticationPrincipal Long userId, BindingResult result,
             @RequestBody UpdateUserRequest updateUserRequest) {
+      
         validationHelper.validateOrThrow(result);
         // TODO: 這邊要補充一下驗證邏輯
         updateUserRequest.setUserId(userId);
