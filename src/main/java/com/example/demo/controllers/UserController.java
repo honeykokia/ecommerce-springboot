@@ -63,7 +63,6 @@ public class UserController {
      * @Valid 用於驗證 RegisterRequest 中的字段
      * BindingResult 用於捕獲驗證錯誤
      */
-    @Transactional
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest registerRequest, BindingResult result) {
         validationHelper.validateOrThrow(result);
@@ -81,9 +80,9 @@ public class UserController {
     @PutMapping("/me")
     public ResponseEntity<?> editProfile(@Valid @AuthenticationPrincipal Long userId, BindingResult result,
             @RequestBody UpdateUserRequest updateUserRequest) {
-
+      
         validationHelper.validateOrThrow(result);
-
+        // TODO: 這邊要補充一下驗證邏輯
         updateUserRequest.setUserId(userId);
         ApiResponse response = userService.editProfile(updateUserRequest);
         return ResponseEntity.ok().body(response);
@@ -119,9 +118,9 @@ public class UserController {
     }
 
     @GetMapping("/verify/{token}")
-    public ResponseEntity<?> verifyEmail(@PathVariable String token) {
+    public ResponseEntity<?> verifyToken(@PathVariable String token) {
 
-        ApiResponse response = new ApiResponse(null);
+        ApiResponse response = userService.verifyToken(token);
         return ResponseEntity.ok().body(response);
     }
 

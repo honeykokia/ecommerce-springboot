@@ -2,13 +2,12 @@ package com.example.demo.dto;
 
 import java.time.LocalDate;
 
-import org.springframework.web.multipart.MultipartFile;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
 import lombok.Data;
 
 @Data
@@ -24,6 +23,7 @@ public class UpdateUserRequest {
     private Byte gender;
 
     @NotNull(message = "birthday is required")
+    @Past(message = "birthday must be a past date")
     private LocalDate birthday;
 
     @NotBlank(message = "phone is required")
