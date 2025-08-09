@@ -8,8 +8,9 @@ import lombok.Data;
 public class CartInfo {
     private Long id;
     private Long userId;
+    private Long productId;
     private Integer quantity;
     private Integer unitPrice;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private LocalDateTime createAt;  // Note: Keep same name as API spec
+    private LocalDateTime updateAt;  // Note: Keep same name as API spec
 }
