@@ -75,6 +75,10 @@ public class OrderBean {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
     
+    // Foreign key column
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
+    
     // Foreign key relationship
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", insertable = false, updatable = false)

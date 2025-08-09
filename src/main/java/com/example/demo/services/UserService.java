@@ -160,14 +160,7 @@ public class UserService {
         return new ApiResponse(null);
 
     }
-    public ApiResponse updateAvatar(UpdateUserAvatarRequqst updateUserAvatarRequqst) {
-
-        UserBean user = updateAvatarValidator.validate(updateUserAvatarRequqst);
-        user.setImage(updateUserAvatarRequqst.getImage());
-        userRepository.save(user);
-
-        return new ApiResponse(null);
-    }
+    
     public ApiResponse updateAvatar(UpdateUserAvatarRequqst updateUserAvatarRequqst) {
 
         UserBean user = updateAvatarValidator.validate(updateUserAvatarRequqst);
