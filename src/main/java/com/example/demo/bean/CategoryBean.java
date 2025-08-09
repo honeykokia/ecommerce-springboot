@@ -16,7 +16,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor // optional
+@AllArgsConstructor
 public class CategoryBean {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
