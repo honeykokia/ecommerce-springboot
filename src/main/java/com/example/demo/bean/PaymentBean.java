@@ -52,8 +52,12 @@ public class PaymentBean {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
     
+    // Foreign key column
+    @Column(name = "order_id", nullable = false, unique = true)
+    private Long orderId;
+    
     // Foreign key relationship
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id", unique = true, insertable = false, updatable = false)
+    @JoinColumn(name = "order_id", insertable = false, updatable = false)
     private OrderBean order;
 }
