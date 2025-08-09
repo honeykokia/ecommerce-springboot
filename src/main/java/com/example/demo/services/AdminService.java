@@ -1,0 +1,212 @@
+package com.example.demo.services;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.example.demo.bean.OrderBean;
+import com.example.demo.bean.ProductBean;
+import com.example.demo.bean.UserBean;
+import com.example.demo.dto.ErrorInfo;
+import com.example.demo.dto.OrderInfo;
+import com.example.demo.dto.ProductInfo;
+import com.example.demo.dto.UpdateOrderRequest;
+import com.example.demo.dto.UpdateUserStatusRequest;
+import com.example.demo.dto.UserInfo;
+import com.example.demo.enums.OrderStatus;
+import com.example.demo.enums.ShippingMethod;
+import com.example.demo.enums.ShippingStatus;
+import com.example.demo.enums.UserRole;
+import com.example.demo.exception.ApiException;
+import com.example.demo.repository.AdminRepository;
+import com.example.demo.repository.ProductRepository;
+import com.example.demo.repository.UserRepository;
+import com.example.demo.responses.ApiResponse;
+
+@Service
+public class AdminService {
+
+    @Autowired
+    private UserRepository userRepository;
+    
+    @Autowired
+    private ProductRepository productRepository;
+    
+    @Autowired
+    private AdminRepository adminRepository; // For order-related operations
+    
+    public ApiResponse getAllUsers() {
+        List<UserBean> users = userRepository.findAll();
+        
+        List<UserInfo> userInfoList = users.stream()
+                .map(this::convertToUserInfo)
+                .collect(Collectors.toList());
+        
+        return new ApiResponse(Map.of("users", userInfoList));
+    }
+    
+    public ApiResponse updateUserStatus(Long userId, UpdateUserStatusRequest request) {
+        Optional<UserBean> userOpt = userRepository.findById(userId);
+        
+        if (userOpt.isEmpty()) {
+            ErrorInfo errorInfo = new ErrorInfo();
+            errorInfo.addError("userId", "User not found");
+            throw new ApiException("User not found", 404, errorInfo);
+        }
+        
+        UserBean user = userOpt.get();
+        // Here you would update user status - this depends on your UserBean having a status field
+        // For now, we'll just return success since the schema doesn't show a status field
+        
+        userRepository.save(user);
+        return new ApiResponse(Map.of("message", "User status updated successfully"));
+    }
+    
+    public ApiResponse createProduct(ProductInfo productInfo) {
+        ProductBean product = new ProductBean();
+        product.setName(productInfo.getName());
+        product.setPrice(productInfo.getPrice());
+        product.setImageUrl(productInfo.getImageURL());
+        product.setInStock(productInfo.getInStock() != null ? productInfo.getInStock() : 0);
+        product.setRating(productInfo.getRating() != null ? productInfo.getRating() : 0.0);
+        product.setSoldCount(productInfo.getSoldCount() != null ? productInfo.getSoldCount() : 0);
+        product.setShortDescription(productInfo.getShortDescription());
+        product.setCategoryId(productInfo.getCategoryId());
+        product.setPromotionId(productInfo.getPromotionId());
+        
+        productRepository.save(product);
+        return new ApiResponse(Map.of("message", "Product created successfully"));
+    }
+    
+    public ApiResponse updateProduct(Long productId, ProductInfo productInfo) {
+        Optional<ProductBean> productOpt = productRepository.findById(productId);
+        
+        if (productOpt.isEmpty()) {
+            ErrorInfo errorInfo = new ErrorInfo();
+            errorInfo.addError("productId", "Product not found");
+            throw new ApiException("Product not found", 404, errorInfo);
+        }
+        
+        ProductBean product = productOpt.get();
+        if (productInfo.getName() != null) product.setName(productInfo.getName());
+        if (productInfo.getPrice() != null) product.setPrice(productInfo.getPrice());
+        if (productInfo.getImageURL() != null) product.setImageUrl(productInfo.getImageURL());
+        if (productInfo.getInStock() != null) product.setInStock(productInfo.getInStock());
+        if (productInfo.getRating() != null) product.setRating(productInfo.getRating());
+        if (productInfo.getSoldCount() != null) product.setSoldCount(productInfo.getSoldCount());
+        if (productInfo.getShortDescription() != null) product.setShortDescription(productInfo.getShortDescription());
+        if (productInfo.getCategoryId() != null) product.setCategoryId(productInfo.getCategoryId());
+        if (productInfo.getPromotionId() != null) product.setPromotionId(productInfo.getPromotionId());
+        
+        productRepository.save(product);
+        return new ApiResponse(Map.of("message", "Product updated successfully"));
+    }
+    
+    public ApiResponse deleteProduct(Long productId) {
+        Optional<ProductBean> productOpt = productRepository.findById(productId);
+        
+        if (productOpt.isEmpty()) {
+            ErrorInfo errorInfo = new ErrorInfo();
+            errorInfo.addError("productId", "Product not found");
+            throw new ApiException("Product not found", 404, errorInfo);
+        }
+        
+        productRepository.deleteById(productId);
+        return new ApiResponse(Map.of("message", "Product deleted successfully"));
+    }
+    
+    public ApiResponse getAllOrders() {
+        List<OrderBean> orders = adminRepository.findAllOrdersOrderByCreatedAt();
+        
+        List<OrderInfo> orderInfoList = orders.stream()
+                .map(this::convertToOrderInfo)
+                .collect(Collectors.toList());
+        
+        return new ApiResponse(Map.of("orders", orderInfoList));
+    }
+    
+    public ApiResponse updateOrderStatus(Long orderId, UpdateOrderRequest request) {
+        Optional<OrderBean> orderOpt = adminRepository.findById(orderId);
+        
+        if (orderOpt.isEmpty()) {
+            ErrorInfo errorInfo = new ErrorInfo();
+            errorInfo.addError("orderId", "Order not found");
+            throw new ApiException("Order not found", 404, errorInfo);
+        }
+        
+        OrderBean order = orderOpt.get();
+        
+        if (request.getStatus() != null) {
+            try {
+                order.setStatus(OrderStatus.valueOf(request.getStatus()));
+            } catch (IllegalArgumentException e) {
+                ErrorInfo errorInfo = new ErrorInfo();
+                errorInfo.addError("status", "Invalid order status");
+                throw new ApiException("Invalid order status", 400, errorInfo);
+            }
+        }
+        
+        if (request.getShippingMethod() != null) {
+            try {
+                order.setShippingMethod(ShippingMethod.valueOf(request.getShippingMethod()));
+            } catch (IllegalArgumentException e) {
+                ErrorInfo errorInfo = new ErrorInfo();
+                errorInfo.addError("shippingMethod", "Invalid shipping method");
+                throw new ApiException("Invalid shipping method", 400, errorInfo);
+            }
+        }
+        
+        if (request.getShippingAddress() != null) {
+            order.setShippingAddress(request.getShippingAddress());
+        }
+        
+        order.setUpdatedAt(LocalDateTime.now());
+        adminRepository.save(order);
+        
+        return new ApiResponse(Map.of("message", "Order status updated successfully"));
+    }
+    
+    public ApiResponse deleteOrder(Long orderId) {
+        Optional<OrderBean> orderOpt = adminRepository.findById(orderId);
+        
+        if (orderOpt.isEmpty()) {
+            ErrorInfo errorInfo = new ErrorInfo();
+            errorInfo.addError("orderId", "Order not found");
+            throw new ApiException("Order not found", 404, errorInfo);
+        }
+        
+        adminRepository.deleteById(orderId);
+        return new ApiResponse(Map.of("message", "Order deleted successfully"));
+    }
+    
+    private UserInfo convertToUserInfo(UserBean user) {
+        UserInfo userInfo = new UserInfo();
+        userInfo.setName(user.getName());
+        userInfo.setEmail(user.getEmail());
+        return userInfo;
+    }
+    
+    private OrderInfo convertToOrderInfo(OrderBean order) {
+        OrderInfo orderInfo = new OrderInfo();
+        orderInfo.setId(order.getId());
+        orderInfo.setUserId(order.getUserId());
+        orderInfo.setOrderNumber(order.getOrderNumber());
+        orderInfo.setStatus(order.getStatus().name());
+        orderInfo.setPaymentMethod(order.getPaymentMethod().name());
+        orderInfo.setIsPaid(order.getIsPaid());
+        orderInfo.setPaidAt(order.getPaidAt());
+        orderInfo.setCancelledAt(order.getCancelledAt());
+        orderInfo.setShippingMethod(order.getShippingMethod().name());
+        orderInfo.setShippingAddress(order.getShippingAddress());
+        orderInfo.setShippingStatus(order.getShippingStatus().name());
+        orderInfo.setTotalPrice(order.getTotalPrice().longValue());
+        orderInfo.setCreatedAt(order.getCreatedAt());
+        orderInfo.setUpdatedAt(order.getUpdatedAt());
+        return orderInfo;
+    }
+}

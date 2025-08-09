@@ -159,6 +159,7 @@ public class UserService {
         return new ApiResponse(null);
 
     }
+
     public ApiResponse updateAvatar(UpdateUserAvatarRequqst updateUserAvatarRequqst) {
 
         UserBean user = updateAvatarValidator.validate(updateUserAvatarRequqst);
