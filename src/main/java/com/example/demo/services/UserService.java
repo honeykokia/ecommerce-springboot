@@ -27,7 +27,6 @@ import com.example.demo.repository.TokenRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.responses.ApiResponse;
 import com.example.demo.utils.JwtUtil;
-import com.example.demo.utils.ResetTokenGenerator;
 import com.example.demo.vaildator.ChangePasswordValidator;
 import com.example.demo.vaildator.ForgetPasswordValidator;
 import com.example.demo.vaildator.LoginValidator;
@@ -140,9 +139,9 @@ public class UserService {
     }
 
     public ApiResponse editProfile(UpdateUserRequest updateUserRequest) {
-        ErrorInfo errorInfo = new ErrorInfo();
         UserBean userBean = userRepository.findById(updateUserRequest.getUserId())
         .orElseThrow(() -> {
+            ErrorInfo errorInfo = new ErrorInfo();
             errorInfo.addError("userId", "Connection abnormal");
             return new ApiException("User not found", 404, errorInfo);
         });
@@ -160,7 +159,7 @@ public class UserService {
         return new ApiResponse(null);
 
     }
-    
+
     public ApiResponse updateAvatar(UpdateUserAvatarRequqst updateUserAvatarRequqst) {
 
         UserBean user = updateAvatarValidator.validate(updateUserAvatarRequqst);
