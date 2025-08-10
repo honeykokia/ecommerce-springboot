@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.dto.CartAddItemRequest;
 import com.example.demo.dto.CartInfo;
 import com.example.demo.dto.UpdateCartProductRequest;
 import com.example.demo.responses.ApiResponse;
@@ -33,8 +34,8 @@ public class CartController {
     @PostMapping("/me")
     public ResponseEntity<ApiResponse> addProductToCart(
             @AuthenticationPrincipal Long userId,
-            @RequestBody CartInfo cartInfo) {
-        ApiResponse response = cartService.addProductToCart(userId, cartInfo);
+            @RequestBody CartAddItemRequest cartAddItemRequest) {
+        ApiResponse response = cartService.addProductToCart(userId, cartAddItemRequest);
         return ResponseEntity.ok(response);
     }
     

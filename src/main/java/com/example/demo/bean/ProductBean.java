@@ -37,6 +37,7 @@ public class ProductBean {
     @Column(name = "in_stock", nullable = false)
     private Integer inStock;
     
+    @Column(name = "rating")
     private Double rating;
     
     @Column(name = "sold_count")

@@ -4,21 +4,27 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.bean.CartBean;
+import com.example.demo.bean.CartItemBean;
 import com.example.demo.bean.ProductBean;
+import com.example.demo.bean.UserBean;
+import com.example.demo.dto.CartAddItemRequest;
 import com.example.demo.dto.CartInfo;
 import com.example.demo.dto.ErrorInfo;
 import com.example.demo.dto.UpdateCartProductRequest;
+import com.example.demo.enums.CartStatus;
 import com.example.demo.exception.ApiException;
+import com.example.demo.repository.CartItemRepository;
 import com.example.demo.repository.CartRepository;
 import com.example.demo.repository.ProductRepository;
 import com.example.demo.responses.ApiResponse;
+
+import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
 
 @Service
 public class CartService {
@@ -27,134 +33,122 @@ public class CartService {
     private CartRepository cartRepository;
     
     @Autowired
+    private CartItemRepository cartItemRepository;
+
+    @Autowired
     private ProductRepository productRepository;
 
-    /**
-     * Get all cart items for a user
-     */
+    @Autowired
+    private EntityManager em;
+
     public ApiResponse getUserCart(Long userId) {
-        List<CartBean> cartItems = cartRepository.findByUserId(userId);
-        
+        Optional<CartBean> cartOpt = cartRepository.findByUserIdAndStatus(userId, CartStatus.ACTIVE);
+        if (!cartOpt.isPresent()) {
+            CartBean newCart = new CartBean();
+            newCart.setUser(em.getReference(UserBean.class, userId));
+            newCart.setStatus(CartStatus.ACTIVE);
+            newCart.setCreatedAt(LocalDateTime.now());
+            cartRepository.save(newCart);
+            return new ApiResponse(Map.of("cart", List.of()));
+        }
+
+        List<CartItemBean> cartItems = cartItemRepository.findByCartId(cartOpt.get().getId());
         List<CartInfo> cartInfoList = cartItems.stream()
-                .map(this::convertToCartInfo)
-                .collect(Collectors.toList());
-        
+            .map(item -> {
+                CartInfo info = new CartInfo();
+                info.setId(item.getId());
+                info.setUserId(userId);
+                info.setCreateAt(item.getCart().getCreatedAt());
+                return info;
+            })
+            .toList();
         return new ApiResponse(Map.of("cart", cartInfoList));
     }
 
-    /**
-     * Add product to cart or update quantity if already exists
-     */
     @Transactional
-    public ApiResponse addProductToCart(Long userId, CartInfo cartInfo) {
-        // Validate product exists
-        Optional<ProductBean> productOpt = productRepository.findById(cartInfo.getProductId());
-        if (productOpt.isEmpty()) {
-            ErrorInfo errorInfo = new ErrorInfo();
-            errorInfo.addError("product", "產品不存在或已下架");
-            throw new ApiException("Product not found", 400, errorInfo);
-        }
-        
-        ProductBean product = productOpt.get();
-        
-        // Validate quantity
-        if (cartInfo.getQuantity() == null || cartInfo.getQuantity() <= 0) {
-            ErrorInfo errorInfo = new ErrorInfo();
-            errorInfo.addError("quantity", "數量必須大於0");
-            throw new ApiException("Invalid quantity", 400, errorInfo);
-        }
-        
-        // Check if product already in cart
-        Optional<CartBean> existingCartItem = cartRepository.findByUserIdAndProductId(userId, cartInfo.getProductId());
-        
-        CartBean cartBean;
-        if (existingCartItem.isPresent()) {
-            // Update existing cart item quantity
-            cartBean = existingCartItem.get();
-            cartBean.setQuantity(cartBean.getQuantity() + cartInfo.getQuantity());
-            cartBean.setUpdatedAt(LocalDateTime.now());
+    public ApiResponse addProductToCart(Long userId, CartAddItemRequest cartAddItemRequest) {
+        CartBean cart = cartRepository.findByUserIdAndStatus(userId, CartStatus.ACTIVE)
+            .orElseGet(() -> {
+                CartBean c = new CartBean();
+                c.setUser(em.getReference(UserBean.class, userId));
+                c.setStatus(CartStatus.ACTIVE);
+                c.setCreatedAt(LocalDateTime.now());
+                return cartRepository.save(c);
+            });
+
+        Optional<CartItemBean> existingItemOpt = cartItemRepository.findByCartIdAndProductId(cart.getId(), cartAddItemRequest.getProductId());
+        if (existingItemOpt.isPresent()) {
+            // Update quantity if item already exists
+            CartItemBean existingItem = existingItemOpt.get();
+            existingItem.setQuantity(existingItem.getQuantity() + cartAddItemRequest.getQuantity());
+            cartItemRepository.save(existingItem);
         } else {
-            // Create new cart item
-            cartBean = new CartBean();
-            cartBean.setUserId(userId);
-            cartBean.setProductId(cartInfo.getProductId());
-            cartBean.setQuantity(cartInfo.getQuantity());
-            cartBean.setUnitPrice(product.getPrice());
-            cartBean.setCreatedAt(LocalDateTime.now());
-            cartBean.setUpdatedAt(LocalDateTime.now());
+            // Add new item to cart
+            CartItemBean newItem = new CartItemBean();
+            newItem.setProduct(em.getReference(ProductBean.class, cartAddItemRequest.getProductId()));
+            newItem.setQuantity(cartAddItemRequest.getQuantity());
+            newItem.setUnitPrice(productRepository.getPrice(cartAddItemRequest.getProductId()));
+            cart.addItem(newItem);
+            cartItemRepository.save(newItem);
         }
-        
-        cartRepository.save(cartBean);
-        
-        return new ApiResponse(Map.of());
+
+        return new ApiResponse(null);
     }
 
-    /**
-     * Clear all cart items for a user
-     */
     @Transactional
     public ApiResponse clearCart(Long userId) {
         cartRepository.deleteByUserId(userId);
         return new ApiResponse(Map.of());
     }
 
-    /**
-     * Remove specific product from cart
-     */
     @Transactional
     public ApiResponse removeProductFromCart(Long userId, Long productId) {
         // Check if product exists in cart
-        if (!cartRepository.existsByUserIdAndProductId(userId, productId)) {
+        Optional<CartItemBean> cartItemOpt = cartItemRepository.findByCartIdAndProductId(userId, productId);
+
+        if(!cartItemOpt.isPresent()){
             ErrorInfo errorInfo = new ErrorInfo();
-            errorInfo.addError("productId", "產品不存在購物車中");
+            errorInfo.addError("productId", "product not in cart");
             throw new ApiException("Product not in cart", 400, errorInfo);
         }
-        
-        cartRepository.deleteByUserIdAndProductId(userId, productId);
+
+        cartItemRepository.delete(cartItemOpt.get());
         return new ApiResponse(Map.of());
     }
 
-    /**
-     * Update product quantity in cart
-     */
     @Transactional
     public ApiResponse updateCartProductQuantity(Long userId, Long productId, UpdateCartProductRequest request) {
         // Validate quantity
+
         if (request.getQuantity() == null || request.getQuantity() <= 0) {
             ErrorInfo errorInfo = new ErrorInfo();
-            errorInfo.addError("quantity", "數量必須大於0");
+            errorInfo.addError("quantity", "quantity must be greater than 0");
             throw new ApiException("Invalid quantity", 400, errorInfo);
         }
         
+        CartBean cart = cartRepository.findByUserIdAndStatus(userId, CartStatus.ACTIVE)
+            .orElseThrow(() -> {
+                ErrorInfo errorInfo = new ErrorInfo();
+                errorInfo.addError("cart", "cart not found");
+                throw new ApiException("Cart not found", 400, errorInfo);
+            });
+
         // Find cart item
-        Optional<CartBean> cartItemOpt = cartRepository.findByUserIdAndProductId(userId, productId);
+        Optional<CartItemBean> cartItemOpt = cartItemRepository.findByCartIdAndProductId(userId, productId);
         if (cartItemOpt.isEmpty()) {
             ErrorInfo errorInfo = new ErrorInfo();
-            errorInfo.addError("productId", "產品不存在購物車中");
+            errorInfo.addError("productId", "product not in cart");
             throw new ApiException("Product not in cart", 400, errorInfo);
         }
-        
-        CartBean cartBean = cartItemOpt.get();
-        cartBean.setQuantity(request.getQuantity());
-        cartBean.setUpdatedAt(LocalDateTime.now());
-        
-        cartRepository.save(cartBean);
+        CartItemBean cartItemBean = cartItemOpt.get();
+        cartItemBean.setQuantity(request.getQuantity());
+        cartItemRepository.save(cartItemBean);
+
         
         return new ApiResponse(Map.of());
     }
 
-    /**
-     * Convert CartBean to CartInfo DTO
-     */
-    private CartInfo convertToCartInfo(CartBean cartBean) {
-        CartInfo cartInfo = new CartInfo();
-        cartInfo.setId(cartBean.getId());
-        cartInfo.setUserId(cartBean.getUserId());
-        cartInfo.setProductId(cartBean.getProductId());
-        cartInfo.setQuantity(cartBean.getQuantity());
-        cartInfo.setUnitPrice(cartBean.getUnitPrice());
-        cartInfo.setCreateAt(cartBean.getCreatedAt());
-        cartInfo.setUpdateAt(cartBean.getUpdatedAt());
-        return cartInfo;
-    }
+    // /**
+    //  * Convert CartBean to CartInfo DTO
+    //  */
 }

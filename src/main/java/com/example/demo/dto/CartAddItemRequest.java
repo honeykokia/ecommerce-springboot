@@ -3,11 +3,8 @@ package com.example.demo.dto;
 import lombok.Data;
 
 @Data
-public class OrderDetailInfo {
-    private Long orderId;
+public class CartAddItemRequest {
     private Long productId;
-    private String productName;
     private Integer quantity;
     private Integer unitPrice;
-    private Integer totalPrice;
 }

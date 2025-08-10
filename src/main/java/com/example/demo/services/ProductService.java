@@ -62,9 +62,9 @@ public class ProductService {
         productInfo.setRating(product.getRating());
         productInfo.setSoldCount(product.getSoldCount());
         productInfo.setShortDescription(product.getShortDescription());
-        productInfo.setCategoryId(product.getCategoryId());
-        productInfo.setPromotionId(product.getPromotionId());
-        
+        productInfo.setCategoryId(product.getCategory().getId());
+        productInfo.setPromotionId(product.getPromotion().getId());
+
         // Get tags for this product
         List<TagBean> tags = productTagRepository.findTagsByProductId(product.getId());
         List<TagInfo> tagInfos = tags.stream()
