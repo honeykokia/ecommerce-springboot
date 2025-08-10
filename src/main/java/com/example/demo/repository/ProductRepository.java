@@ -33,4 +33,7 @@ public interface ProductRepository extends JpaRepository<ProductBean, Long> {
     // Find a product with its tags
     @Query("SELECT p FROM ProductBean p WHERE p.id = :productId")
     Optional<ProductBean> findProductById(@Param("productId") Long productId);
+
+    @Query("SELECT p.price FROM ProductBean p WHERE p.id = :productId")
+    Integer getPrice(@Param("productId") Long productId);
 }

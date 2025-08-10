@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import com.example.demo.bean.OrderBean;
 
 @Repository
-public interface AdminRepository extends JpaRepository<OrderBean, Long> {
+public interface OrderRepository extends JpaRepository<OrderBean, Long> {
     
     // Order management methods for admin
     @Query("SELECT o FROM OrderBean o ORDER BY o.createdAt DESC")

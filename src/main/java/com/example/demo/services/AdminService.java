@@ -9,9 +9,13 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.bean.CategoryBean;
 import com.example.demo.bean.OrderBean;
 import com.example.demo.bean.ProductBean;
+import com.example.demo.bean.PromotionBean;
 import com.example.demo.bean.UserBean;
+import com.example.demo.dto.CreateCategoryRequest;
+import com.example.demo.dto.CreatePromotionRequest;
 import com.example.demo.dto.ErrorInfo;
 import com.example.demo.dto.OrderInfo;
 import com.example.demo.dto.ProductInfo;
@@ -20,11 +24,11 @@ import com.example.demo.dto.UpdateUserStatusRequest;
 import com.example.demo.dto.UserInfo;
 import com.example.demo.enums.OrderStatus;
 import com.example.demo.enums.ShippingMethod;
-import com.example.demo.enums.ShippingStatus;
-import com.example.demo.enums.UserRole;
 import com.example.demo.exception.ApiException;
-import com.example.demo.repository.AdminRepository;
+import com.example.demo.repository.CategoryRepository;
+import com.example.demo.repository.OrderRepository;
 import com.example.demo.repository.ProductRepository;
+import com.example.demo.repository.PromotionRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.responses.ApiResponse;
 
@@ -38,8 +42,14 @@ public class AdminService {
     private ProductRepository productRepository;
     
     @Autowired
-    private AdminRepository adminRepository; // For order-related operations
-    
+    private OrderRepository orderRepository; // For order-related operations
+
+    @Autowired
+    private PromotionRepository promotionRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
+
     public ApiResponse getAllUsers() {
         List<UserBean> users = userRepository.findAll();
         
@@ -80,7 +90,7 @@ public class AdminService {
         product.setPromotionId(productInfo.getPromotionId());
         
         productRepository.save(product);
-        return new ApiResponse(Map.of("message", "Product created successfully"));
+        return new ApiResponse(null);
     }
     
     public ApiResponse updateProduct(Long productId, ProductInfo productInfo) {
@@ -121,7 +131,7 @@ public class AdminService {
     }
     
     public ApiResponse getAllOrders() {
-        List<OrderBean> orders = adminRepository.findAllOrdersOrderByCreatedAt();
+        List<OrderBean> orders = orderRepository.findAllOrdersOrderByCreatedAt();
         
         List<OrderInfo> orderInfoList = orders.stream()
                 .map(this::convertToOrderInfo)
@@ -131,7 +141,7 @@ public class AdminService {
     }
     
     public ApiResponse updateOrderStatus(Long orderId, UpdateOrderRequest request) {
-        Optional<OrderBean> orderOpt = adminRepository.findById(orderId);
+        Optional<OrderBean> orderOpt = orderRepository.findById(orderId);
         
         if (orderOpt.isEmpty()) {
             ErrorInfo errorInfo = new ErrorInfo();
@@ -166,13 +176,13 @@ public class AdminService {
         }
         
         order.setUpdatedAt(LocalDateTime.now());
-        adminRepository.save(order);
+        orderRepository.save(order);
         
         return new ApiResponse(Map.of("message", "Order status updated successfully"));
     }
     
     public ApiResponse deleteOrder(Long orderId) {
-        Optional<OrderBean> orderOpt = adminRepository.findById(orderId);
+        Optional<OrderBean> orderOpt = orderRepository.findById(orderId);
         
         if (orderOpt.isEmpty()) {
             ErrorInfo errorInfo = new ErrorInfo();
@@ -180,8 +190,33 @@ public class AdminService {
             throw new ApiException("Order not found", 404, errorInfo);
         }
         
-        adminRepository.deleteById(orderId);
+        orderRepository.deleteById(orderId);
         return new ApiResponse(Map.of("message", "Order deleted successfully"));
+    }
+
+    public ApiResponse createPromotion(CreatePromotionRequest createPromotionRequest) {
+
+        PromotionBean promotion = new PromotionBean();
+        promotion.setName(createPromotionRequest.getName());
+        promotion.setDiscountType(createPromotionRequest.getDiscountType());
+        promotion.setDiscountValue(createPromotionRequest.getDiscountValue());
+        promotion.setDescription(createPromotionRequest.getDescription());
+        promotion.setImageUrl(createPromotionRequest.getImageUrl());
+        promotion.setIsActive(createPromotionRequest.getIsActive());
+        promotion.setStartDate(createPromotionRequest.getStartDate());
+        promotion.setEndDate(createPromotionRequest.getEndDate());
+
+        promotionRepository.save(promotion);
+        return new ApiResponse(null);
+    }
+    public ApiResponse createCategory(CreateCategoryRequest createCategoryRequest) {
+        // Assuming you have a CategoryBean and CategoryRepository similar to Product and Promotion
+        CategoryBean category = new CategoryBean();
+        category.setName(createCategoryRequest.getName());
+        category.setDescription(createCategoryRequest.getDescription());
+
+        categoryRepository.save(category);
+        return new ApiResponse(null);
     }
     
     private UserInfo convertToUserInfo(UserBean user) {
@@ -196,7 +231,7 @@ public class AdminService {
         orderInfo.setId(order.getId());
         orderInfo.setUserId(order.getUserId());
         orderInfo.setOrderNumber(order.getOrderNumber());
-        orderInfo.setStatus(order.getStatus().name());
+        orderInfo.setStatus(order.getStatus());
         orderInfo.setPaymentMethod(order.getPaymentMethod().name());
         orderInfo.setIsPaid(order.getIsPaid());
         orderInfo.setPaidAt(order.getPaidAt());
@@ -204,7 +239,7 @@ public class AdminService {
         orderInfo.setShippingMethod(order.getShippingMethod().name());
         orderInfo.setShippingAddress(order.getShippingAddress());
         orderInfo.setShippingStatus(order.getShippingStatus().name());
-        orderInfo.setTotalPrice(order.getTotalPrice().longValue());
+        orderInfo.setTotalPrice(order.getTotalPrice());
         orderInfo.setCreatedAt(order.getCreatedAt());
         orderInfo.setUpdatedAt(order.getUpdatedAt());
         return orderInfo;

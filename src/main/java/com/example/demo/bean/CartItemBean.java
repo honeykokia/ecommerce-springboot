@@ -25,24 +25,20 @@ public class CartItemBean {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Column(name = "cart_id", nullable = false)
-    private Long cartId;
+    // Foreign key relationships
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cart_id", nullable = false)
+    private CartBean cart;
     
-    @Column(name = "product_id", nullable = false)
-    private Long productId;
-    
-    @Column(nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id", nullable = false)
+    private ProductBean product;
+
+    @Column(name="quantity", nullable = false)
     private Integer quantity;
     
     @Column(name = "unit_price", nullable = false)
     private Integer unitPrice;
     
-    // Foreign key relationships
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cart_id", insertable = false, updatable = false)
-    private CartBean cart;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", insertable = false, updatable = false)
-    private ProductBean product;
+
 }

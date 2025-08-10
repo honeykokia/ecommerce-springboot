@@ -1,5 +1,7 @@
 package com.example.demo.services;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -7,14 +9,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.example.demo.dto.ProductInfo;
-import com.example.demo.repository.AdminRepository;
+import com.example.demo.repository.OrderRepository;
 import com.example.demo.repository.ProductRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.responses.ApiResponse;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class AdminServiceTest {
@@ -29,7 +27,7 @@ public class AdminServiceTest {
     private ProductRepository productRepository;
 
     @Mock
-    private AdminRepository adminRepository;
+    private OrderRepository orderRepository;
 
     @Test
     public void testCreateProduct() {
