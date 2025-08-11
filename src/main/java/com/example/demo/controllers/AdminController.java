@@ -13,9 +13,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.CreateCategoryRequest;
+import com.example.demo.dto.CreateProductRequest;
 import com.example.demo.dto.CreatePromotionRequest;
-import com.example.demo.dto.ProductInfo;
 import com.example.demo.dto.UpdateOrderRequest;
+import com.example.demo.dto.UpdateProductRequest;
 import com.example.demo.dto.UpdateUserStatusRequest;
 import com.example.demo.responses.ApiResponse;
 import com.example.demo.services.AdminService;
@@ -41,14 +42,14 @@ public class AdminController {
     }
 
     @PostMapping("/products")
-    public ResponseEntity<?> createProduct(@RequestBody ProductInfo productInfo) {
-        ApiResponse response = adminService.createProduct(productInfo);
+    public ResponseEntity<?> createProduct(@RequestBody CreateProductRequest createProductRequest) {
+        ApiResponse response = adminService.createProduct(createProductRequest);
         return ResponseEntity.ok().body(response);
     }
 
     @PutMapping("/products/{productId}")
-    public ResponseEntity<?> updateProduct(@PathVariable Long productId, @RequestBody ProductInfo productInfo) {
-        ApiResponse response = adminService.updateProduct(productId, productInfo);
+    public ResponseEntity<?> updateProduct(@PathVariable Long productId, @RequestBody UpdateProductRequest updateProductRequest) {
+        ApiResponse response = adminService.updateProduct(productId, updateProductRequest);
         return ResponseEntity.ok().body(response);
     }
 

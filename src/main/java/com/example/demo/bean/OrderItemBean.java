@@ -28,11 +28,12 @@ public class OrderItemBean {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "order_id")
-    private Long orderId;
-
     @Column(name = "product_id")
     private Long productId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id", nullable = false)
+    private OrderBean order;
 
     @Column(name = "product_name")
     private String productName;
@@ -45,9 +46,5 @@ public class OrderItemBean {
 
     @Column(name = "total_price")
     private Integer totalPrice;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id", insertable = false, updatable = false)
-    private OrderBean order;
 
 }

@@ -92,7 +92,7 @@ public class OrderService {
 
     public OrderDetailInfo convertToOrderDetailInfo(OrderItemBean orderitem) {
         OrderDetailInfo orderDetailInfo = new OrderDetailInfo();
-        orderDetailInfo.setOrderId(orderitem.getOrderId());
+        orderDetailInfo.setOrderId(orderitem.getOrder().getId());
         orderDetailInfo.setProductId(orderitem.getProductId());
         orderDetailInfo.setProductName(orderitem.getProductName());
         orderDetailInfo.setQuantity(orderitem.getQuantity());

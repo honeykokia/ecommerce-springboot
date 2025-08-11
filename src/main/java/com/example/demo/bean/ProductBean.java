@@ -24,6 +24,15 @@ public class ProductBean {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+     // Foreign key relationships
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "promotion_id", nullable = false)
+    private PromotionBean promotion;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id", nullable = false)
+    private CategoryBean category;   
     
     @Column(nullable = false)
     private String name;
@@ -46,19 +55,4 @@ public class ProductBean {
     @Column(name = "short_description")
     private String shortDescription;
     
-    // Foreign key columns
-    @Column(name = "category_id")
-    private Long categoryId;
-    
-    @Column(name = "promotion_id")
-    private Long promotionId;
-    
-    // Foreign key relationships
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "promotion_id", insertable = false, updatable = false)
-    private PromotionBean promotion;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", insertable = false, updatable = false)
-    private CategoryBean category;
 }

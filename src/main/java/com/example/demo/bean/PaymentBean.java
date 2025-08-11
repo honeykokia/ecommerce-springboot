@@ -31,6 +31,11 @@ public class PaymentBean {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    // Foreign key relationship
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id", unique = true, nullable = false)
+    private OrderBean order;
     
     @Enumerated(EnumType.STRING)
     @Column(name = "payment_method", nullable = false)
@@ -52,8 +57,4 @@ public class PaymentBean {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
     
-    // Foreign key relationship
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id", unique = true, insertable = false, updatable = false)
-    private OrderBean order;
 }

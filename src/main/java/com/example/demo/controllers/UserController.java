@@ -100,8 +100,8 @@ public class UserController {
     }
 
     @PatchMapping("/me/password")
-    public ResponseEntity<?> changePassword(@Valid @AuthenticationPrincipal Long userId, BindingResult result,
-            @RequestBody UpdatePasswordRequest updatePasswordRequest) {
+    public ResponseEntity<?> changePassword(@AuthenticationPrincipal Long userId,
+            @Valid @RequestBody UpdatePasswordRequest updatePasswordRequest,BindingResult result) {
         validationHelper.validateOrThrow(result);
 
         updatePasswordRequest.setUserId(userId);

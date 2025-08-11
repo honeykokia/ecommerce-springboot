@@ -34,12 +34,12 @@ public class ChangePasswordValidator implements CustValidator<UpdatePasswordRequ
                     errorInfo.addError("userId", "Connection abnormal");
                     return new ApiException("User not found", 404, errorInfo);
                 });
-        if(passwordEncoder.matches(target.getOldPassword(), user.getPassword())) {
+        if(!passwordEncoder.matches(target.getOldPassword(), user.getPassword())) {
             errorInfo.addError("oldPassword", "Old password is incorrect");
             throw new ApiException("Validation failed", 400, errorInfo);
         }
 
-        if (!target.getNewPassword().equals(target.getConfirmNewPassword())) {
+        if (!target.getNewPassword().equals(target.getNewConfirmPassword())) {
             errorInfo.addError("confirmNewPassword", "New password and confirm new password do not match");
             throw new ApiException("Validation failed", 400, errorInfo);
         }

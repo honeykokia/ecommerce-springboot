@@ -176,7 +176,7 @@ public class UserService {
         user.setPassword(encodedPassword);
         userRepository.save(user);
 
-        return new ApiResponse(Map.of("message", "Password changed successfully"));
+        return new ApiResponse(null);
     }
 
     public ApiResponse forgetPassword(ForgetPasswordRequest request) {
