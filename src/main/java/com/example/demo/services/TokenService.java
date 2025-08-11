@@ -9,9 +9,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.bean.TokenBean;
+import com.example.demo.bean.UserBean;
 import com.example.demo.enums.TokenType;
 import com.example.demo.repository.TokenRepository;
 
+import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -22,6 +24,9 @@ public class TokenService {
 
     @Autowired
     private TokenRepository tokenRepository;
+
+    @Autowired
+    private EntityManager em;
 
     @Transactional
     public String generateToken(Long userId){
@@ -36,7 +41,7 @@ public class TokenService {
         LocalDateTime expiresAt = LocalDateTime.now().plus(defaultDuration, ChronoUnit.MINUTES);
 
         TokenBean tokenBean = new TokenBean();
-        tokenBean.setUserId(userId);
+        tokenBean.setUser(em.getReference(UserBean.class, userId));
         tokenBean.setToken(token);
         tokenBean.setTokenType(TokenType.forgetPassword);
         tokenBean.setUsed(false);

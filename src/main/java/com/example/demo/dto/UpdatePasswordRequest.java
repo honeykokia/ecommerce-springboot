@@ -19,5 +19,5 @@ public class UpdatePasswordRequest {
     private String newPassword;
 
     @NotBlank(message = "Confirm new password is required")
-    private String confirmNewPassword;
+    private String newConfirmPassword;
 }

@@ -15,11 +15,13 @@ import com.example.demo.bean.ProductBean;
 import com.example.demo.bean.PromotionBean;
 import com.example.demo.bean.UserBean;
 import com.example.demo.dto.CreateCategoryRequest;
+import com.example.demo.dto.CreateProductRequest;
 import com.example.demo.dto.CreatePromotionRequest;
 import com.example.demo.dto.ErrorInfo;
 import com.example.demo.dto.OrderInfo;
 import com.example.demo.dto.ProductInfo;
 import com.example.demo.dto.UpdateOrderRequest;
+import com.example.demo.dto.UpdateProductRequest;
 import com.example.demo.dto.UpdateUserStatusRequest;
 import com.example.demo.dto.UserInfo;
 import com.example.demo.enums.OrderStatus;
@@ -31,6 +33,8 @@ import com.example.demo.repository.ProductRepository;
 import com.example.demo.repository.PromotionRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.responses.ApiResponse;
+
+import jakarta.persistence.EntityManager;
 
 @Service
 public class AdminService {
@@ -49,6 +53,9 @@ public class AdminService {
 
     @Autowired
     private CategoryRepository categoryRepository;
+    
+    @Autowired
+    private EntityManager em;
 
     public ApiResponse getAllUsers() {
         List<UserBean> users = userRepository.findAll();
@@ -77,23 +84,23 @@ public class AdminService {
         return new ApiResponse(Map.of("message", "User status updated successfully"));
     }
     
-    public ApiResponse createProduct(ProductInfo productInfo) {
+    public ApiResponse createProduct(CreateProductRequest createProductRequest) {
         ProductBean product = new ProductBean();
-        product.setName(productInfo.getName());
-        product.setPrice(productInfo.getPrice());
-        product.setImageUrl(productInfo.getImageURL());
-        product.setInStock(productInfo.getInStock() != null ? productInfo.getInStock() : 0);
-        product.setRating(productInfo.getRating() != null ? productInfo.getRating() : 0.0);
-        product.setSoldCount(productInfo.getSoldCount() != null ? productInfo.getSoldCount() : 0);
-        product.setShortDescription(productInfo.getShortDescription());
-        product.setCategoryId(productInfo.getCategoryId());
-        product.setPromotionId(productInfo.getPromotionId());
+        product.setName(createProductRequest.getName());
+        product.setPrice(createProductRequest.getPrice());
+        product.setImageUrl(createProductRequest.getImageUrl());
+        product.setInStock(createProductRequest.getInStock() != null ? createProductRequest.getInStock() : 0);
+        product.setRating(createProductRequest.getRating() != null ? createProductRequest.getRating() : 0.0);
+        product.setSoldCount(createProductRequest.getSoldCount() != null ? createProductRequest.getSoldCount() : 0);
+        product.setShortDescription(createProductRequest.getShortDescription());
+        product.setCategory(em.getReference(CategoryBean.class, createProductRequest.getCategoryId()));
+        product.setPromotion(em.getReference(PromotionBean.class, createProductRequest.getPromotionId()));
         
         productRepository.save(product);
         return new ApiResponse(null);
     }
     
-    public ApiResponse updateProduct(Long productId, ProductInfo productInfo) {
+    public ApiResponse updateProduct(Long productId, UpdateProductRequest updateProductRequest) {
         Optional<ProductBean> productOpt = productRepository.findById(productId);
         
         if (productOpt.isEmpty()) {
@@ -103,16 +110,16 @@ public class AdminService {
         }
         
         ProductBean product = productOpt.get();
-        if (productInfo.getName() != null) product.setName(productInfo.getName());
-        if (productInfo.getPrice() != null) product.setPrice(productInfo.getPrice());
-        if (productInfo.getImageURL() != null) product.setImageUrl(productInfo.getImageURL());
-        if (productInfo.getInStock() != null) product.setInStock(productInfo.getInStock());
-        if (productInfo.getRating() != null) product.setRating(productInfo.getRating());
-        if (productInfo.getSoldCount() != null) product.setSoldCount(productInfo.getSoldCount());
-        if (productInfo.getShortDescription() != null) product.setShortDescription(productInfo.getShortDescription());
-        if (productInfo.getCategoryId() != null) product.setCategoryId(productInfo.getCategoryId());
-        if (productInfo.getPromotionId() != null) product.setPromotionId(productInfo.getPromotionId());
-        
+        if (updateProductRequest.getName() != null) product.setName(updateProductRequest.getName());
+        if (updateProductRequest.getPrice() != null) product.setPrice(updateProductRequest.getPrice());
+        if (updateProductRequest.getImageUrl() != null) product.setImageUrl(updateProductRequest.getImageUrl());
+        if (updateProductRequest.getInStock() != null) product.setInStock(updateProductRequest.getInStock());
+        if (updateProductRequest.getRating() != null) product.setRating(updateProductRequest.getRating());
+        if (updateProductRequest.getSoldCount() != null) product.setSoldCount(updateProductRequest.getSoldCount());
+        if (updateProductRequest.getShortDescription() != null) product.setShortDescription(updateProductRequest.getShortDescription());
+        if (updateProductRequest.getCategoryId() != null) product.setCategory(em.getReference(CategoryBean.class, updateProductRequest.getCategoryId()));
+        if (updateProductRequest.getPromotionId() != null) product.setPromotion(em.getReference(PromotionBean.class, updateProductRequest.getPromotionId()));
+
         productRepository.save(product);
         return new ApiResponse(Map.of("message", "Product updated successfully"));
     }

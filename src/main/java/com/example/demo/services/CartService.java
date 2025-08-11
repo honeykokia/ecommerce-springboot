@@ -56,7 +56,7 @@ public class CartService {
         List<CartInfo> cartInfoList = cartItems.stream()
             .map(item -> {
                 CartInfo info = new CartInfo();
-                info.setId(item.getId());
+                info.setCartItemId(item.getId());
                 info.setUserId(userId);
                 info.setCreateAt(item.getCart().getCreatedAt());
                 return info;
@@ -92,7 +92,7 @@ public class CartService {
             cartItemRepository.save(newItem);
         }
 
-        return new ApiResponse(null);
+        return new ApiResponse(Map.of());
     }
 
     @Transactional
@@ -104,7 +104,13 @@ public class CartService {
     @Transactional
     public ApiResponse removeProductFromCart(Long userId, Long productId) {
         // Check if product exists in cart
-        Optional<CartItemBean> cartItemOpt = cartItemRepository.findByCartIdAndProductId(userId, productId);
+        CartBean cart = cartRepository.findByUserIdAndStatus(userId, CartStatus.ACTIVE)
+            .orElseThrow(() -> {
+                ErrorInfo errorInfo = new ErrorInfo();
+                errorInfo.addError("cart", "cart not found");
+                throw new ApiException("Cart not found", 400, errorInfo);
+            });
+        Optional<CartItemBean> cartItemOpt = cartItemRepository.findByCartIdAndProductId(cart.getId(), productId);
 
         if(!cartItemOpt.isPresent()){
             ErrorInfo errorInfo = new ErrorInfo();
@@ -112,7 +118,7 @@ public class CartService {
             throw new ApiException("Product not in cart", 400, errorInfo);
         }
 
-        cartItemRepository.delete(cartItemOpt.get());
+        cart.removeItem(cartItemOpt.get());
         return new ApiResponse(Map.of());
     }
 
@@ -134,7 +140,7 @@ public class CartService {
             });
 
         // Find cart item
-        Optional<CartItemBean> cartItemOpt = cartItemRepository.findByCartIdAndProductId(userId, productId);
+        Optional<CartItemBean> cartItemOpt = cartItemRepository.findByCartIdAndProductId(cart.getId(), productId);
         if (cartItemOpt.isEmpty()) {
             ErrorInfo errorInfo = new ErrorInfo();
             errorInfo.addError("productId", "product not in cart");

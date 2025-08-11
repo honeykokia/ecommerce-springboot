@@ -24,10 +24,11 @@ public interface ProductRepository extends JpaRepository<ProductBean, Long> {
     
     // Custom query to find products with tags
     @Query("SELECT DISTINCT p FROM ProductBean p " +
-           "LEFT JOIN ProductTagBean pt ON pt.productId = p.id " +
-           "LEFT JOIN TagBean t ON t.id = pt.tagId " +
-           "WHERE (:name IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%'))) " +
-           "AND (:categoryId IS NULL OR p.categoryId = :categoryId)")
+            "LEFT JOIN p.category c " + 
+        //    "LEFT JOIN ProductTagBean pt ON pt.productId = p.id " +
+        //    "LEFT JOIN TagBean t ON t.id = pt.tagId " +
+           "WHERE (:name IS NULL OR LOWER(p.name) LIKE %:name%) " +
+           "AND (:categoryId IS NULL OR c.id = :categoryId)")
     List<ProductBean> findProductsWithFilters(@Param("name") String name, @Param("categoryId") Long categoryId);
     
     // Find a product with its tags

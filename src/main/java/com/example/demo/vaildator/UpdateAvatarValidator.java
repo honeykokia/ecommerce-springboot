@@ -75,7 +75,7 @@ public class UpdateAvatarValidator implements CustValidator<UpdateUserAvatarRequ
         }
 
         
-        target.setImage(filename);
+        target.setImage("/upload/" + filename);
         return user;
     }
 

@@ -40,5 +40,4 @@ public class CartItemBean {
     @Column(name = "unit_price", nullable = false)
     private Integer unitPrice;
     
-
 }
