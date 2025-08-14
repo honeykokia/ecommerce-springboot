@@ -30,6 +30,7 @@ public class SecurityConfig {
                 .requestMatchers("/users/verify/**").permitAll() // 允許忘記密碼驗證連結
                 .requestMatchers("/products").permitAll()
                 .requestMatchers("/categories").permitAll()
+                .requestMatchers("/payments/**").permitAll()
                 .anyRequest().authenticated()
             )
             .csrf(csrf -> csrf.disable()) // 可選擇關閉 CSRF（特別是 API）

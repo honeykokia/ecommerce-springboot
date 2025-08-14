@@ -16,12 +16,15 @@ import com.example.demo.dto.ForgetPasswordRequest;
 import com.example.demo.dto.LoginInfo;
 import com.example.demo.dto.LoginRequest;
 import com.example.demo.dto.RegisterRequest;
+import com.example.demo.dto.ResendVerificationEmailRequest;
 import com.example.demo.dto.UpdatePasswordRequest;
 import com.example.demo.dto.UpdateUserAvatarRequqst;
 import com.example.demo.dto.UpdateUserRequest;
 import com.example.demo.dto.UserInfo;
 import com.example.demo.dto.UserProfileInfo;
+import com.example.demo.enums.TokenType;
 import com.example.demo.enums.UserRole;
+import com.example.demo.enums.UserStatus;
 import com.example.demo.exception.ApiException;
 import com.example.demo.repository.TokenRepository;
 import com.example.demo.repository.UserRepository;
@@ -30,6 +33,7 @@ import com.example.demo.utils.JwtUtil;
 import com.example.demo.vaildator.ChangePasswordValidator;
 import com.example.demo.vaildator.ForgetPasswordValidator;
 import com.example.demo.vaildator.LoginValidator;
+import com.example.demo.vaildator.ResendVerificationEmailValidator;
 import com.example.demo.vaildator.UpdateAvatarValidator;
 import com.example.demo.vaildator.VerifyTokenValidator;
 
@@ -56,6 +60,9 @@ public class UserService {
 
     @Autowired
     private VerifyTokenValidator verifyTokenValidator;
+
+    @Autowired
+    private ResendVerificationEmailValidator resendVerificationEmailValidator;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -102,10 +109,15 @@ public class UserService {
         user.setCountry(null);
         user.setAddress(null);
         user.setRole(UserRole.MEMBER);
+        user.setStatus(UserStatus.INACTIVE);
         user.setCreatedAt(LocalDateTime.now());
         user.setLastLoginAt(LocalDateTime.now());
-
         userRepository.save(user);
+
+        String token = tokenService.generateToken(user.getId(), TokenType.emailVerification);
+        String verifyLink = frontendUrl[0] + "/verify-result?token=" + token;
+
+        emailService.sendSimpleMail(user.getEmail(), "Ecommerce Email Verification", "您好，請點擊以下連結以驗證您的電子郵件：\n" + verifyLink);
 
         UserInfo userInfo = new UserInfo();
         userInfo.setName(user.getName());
@@ -181,7 +193,7 @@ public class UserService {
 
     public ApiResponse forgetPassword(ForgetPasswordRequest request) {
         UserBean user = forgetPasswordValidator.validate(request);
-        String token = tokenService.generateToken(user.getId());
+        String token = tokenService.generateToken(user.getId(), TokenType.forgetPassword);
         String verifyLink = frontendUrl[0] + "/reset-password?token=" + token;
 
         emailService.sendSimpleMail(user.getEmail(), "Ecommerce Reset Password", "您好，請點擊以下連結以重設您的密碼：\n" + verifyLink);
@@ -193,6 +205,24 @@ public class UserService {
         TokenBean tokenBean = verifyTokenValidator.validate(token);
         tokenBean.setUsed(true);
         tokenRepository.save(tokenBean);
+
+        if (tokenBean.getTokenType() == TokenType.emailVerification) {
+            UserBean user = tokenBean.getUser();
+            user.setStatus(UserStatus.ACTIVE);
+            userRepository.save(user);
+        }
+
+        return new ApiResponse(Map.of("token", "You account has been verified"));
+    }
+
+    public ApiResponse resendVerificationEmail(ResendVerificationEmailRequest request) {
+        UserBean user = resendVerificationEmailValidator.validate(request);
+
+        String token = tokenService.generateToken(user.getId(), TokenType.emailVerification);
+        String verifyLink = frontendUrl[0] + "/verify-result?token=" + token;
+
+        emailService.sendSimpleMail(user.getEmail(), "Ecommerce Email Verification", "您好，請點擊以下連結以驗證您的電子郵件：\n" + verifyLink);
+
         return new ApiResponse(null);
     }
 

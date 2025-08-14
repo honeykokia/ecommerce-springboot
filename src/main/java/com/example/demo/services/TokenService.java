@@ -29,9 +29,9 @@ public class TokenService {
     private EntityManager em;
 
     @Transactional
-    public String generateToken(Long userId){
+    public String generateToken(Long userId, TokenType tokenType){
 
-        TokenBean existingToken = tokenRepository.findByUserIdAndTokenType(userId, TokenType.forgetPassword);
+        TokenBean existingToken = tokenRepository.findByUserIdAndTokenType(userId, tokenType);
         if (existingToken != null && !existingToken.isUsed()) {
             // 如果已存在且未使用，則返回已存在的 token
             return existingToken.getToken();
@@ -43,7 +43,7 @@ public class TokenService {
         TokenBean tokenBean = new TokenBean();
         tokenBean.setUser(em.getReference(UserBean.class, userId));
         tokenBean.setToken(token);
-        tokenBean.setTokenType(TokenType.forgetPassword);
+        tokenBean.setTokenType(tokenType);
         tokenBean.setUsed(false);
         tokenBean.setCreatedAt(LocalDateTime.now());
         tokenBean.setExpiresAt(expiresAt);

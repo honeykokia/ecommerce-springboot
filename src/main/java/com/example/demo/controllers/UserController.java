@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.demo.dto.ForgetPasswordRequest;
 import com.example.demo.dto.LoginRequest;
 import com.example.demo.dto.RegisterRequest;
+import com.example.demo.dto.ResendVerificationEmailRequest;
 import com.example.demo.dto.UpdatePasswordRequest;
 import com.example.demo.dto.UpdateUserAvatarRequqst;
 import com.example.demo.dto.UpdateUserRequest;
@@ -25,7 +26,6 @@ import com.example.demo.responses.ApiResponse;
 import com.example.demo.services.UserService;
 import com.example.demo.utils.VaildationHelper;
 
-import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
@@ -123,5 +123,14 @@ public class UserController {
         ApiResponse response = userService.verifyToken(token);
         return ResponseEntity.ok().body(response);
     }
+
+    @PostMapping("/verify/resend")
+    public ResponseEntity<?> ResendVerificationEmail(@Valid @RequestBody ResendVerificationEmailRequest request, BindingResult result) {
+
+        validationHelper.validateOrThrow(result);
+        ApiResponse response = userService.resendVerificationEmail(request);
+        return ResponseEntity.ok().body(response);
+    }
+    
 
 }
