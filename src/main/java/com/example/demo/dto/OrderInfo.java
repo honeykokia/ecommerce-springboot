@@ -3,6 +3,9 @@ package com.example.demo.dto;
 import java.time.LocalDateTime;
 
 import com.example.demo.enums.OrderStatus;
+import com.example.demo.enums.PaymentMethod;
+import com.example.demo.enums.ShippingMethod;
+import com.example.demo.enums.ShippingStatus;
 
 import lombok.Data;
 
@@ -10,16 +13,16 @@ import lombok.Data;
 public class OrderInfo {
     private Long id;
     private Long userId;
-    private String orderNumber;
+    private String merchant_trade_no;
+    private Integer amountCents;
+    private String currency;
     private OrderStatus status;
-    private String paymentMethod;
-    private Boolean isPaid;
+    private PaymentMethod paymentMethod;
     private LocalDateTime cancelledAt;
     private LocalDateTime paidAt;
-    private String shippingMethod;
+    private ShippingMethod shippingMethod;
     private String shippingAddress;
-    private String shippingStatus;
-    private Integer totalPrice;
+    private ShippingStatus shippingStatus;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

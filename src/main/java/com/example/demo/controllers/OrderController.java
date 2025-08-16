@@ -1,10 +1,8 @@
 package com.example.demo.controllers;
 
-import java.util.List;
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,9 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.dto.CheckoutRequest;
-import com.example.demo.dto.OrderDetailInfo;
-import com.example.demo.dto.OrderInfo;
+import com.example.demo.dto.CreateOrderRequest;
 import com.example.demo.responses.ApiResponse;
 import com.example.demo.services.OrderService;
 
@@ -34,9 +30,9 @@ public class OrderController {
     }
 
     @PostMapping("/me")
-    public ResponseEntity<?> createOrder(@RequestBody CheckoutRequest checkoutRequest) {
+    public ResponseEntity<?> createOrder(@AuthenticationPrincipal Long userId, @RequestBody CreateOrderRequest createOrderRequest) {
 
-        ApiResponse response = orderService.createOrder(checkoutRequest);
+        ApiResponse response = orderService.createOrder(userId, createOrderRequest);
         return ResponseEntity.ok(response);
     }
     

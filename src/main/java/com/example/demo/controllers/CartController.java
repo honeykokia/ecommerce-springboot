@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.CartAddItemRequest;
-import com.example.demo.dto.CartInfo;
 import com.example.demo.dto.UpdateCartProductRequest;
 import com.example.demo.responses.ApiResponse;
 import com.example.demo.services.CartService;
