@@ -1,6 +1,7 @@
 package com.example.demo.config;
 
 import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -30,7 +31,7 @@ public class SecurityConfig {
                 .requestMatchers("/users/verify/**").permitAll() // 允許忘記密碼驗證連結
                 .requestMatchers("/products").permitAll()
                 .requestMatchers("/categories").permitAll()
-                .requestMatchers("/payments/**").permitAll()
+                .requestMatchers("/upload/**").permitAll()
                 .anyRequest().authenticated()
             )
             .csrf(csrf -> csrf.disable()) // 可選擇關閉 CSRF（特別是 API）

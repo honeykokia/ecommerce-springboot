@@ -19,7 +19,6 @@ import com.example.demo.dto.CreateProductRequest;
 import com.example.demo.dto.CreatePromotionRequest;
 import com.example.demo.dto.ErrorInfo;
 import com.example.demo.dto.OrderInfo;
-import com.example.demo.dto.ProductInfo;
 import com.example.demo.dto.UpdateOrderRequest;
 import com.example.demo.dto.UpdateProductRequest;
 import com.example.demo.dto.UpdateUserStatusRequest;
@@ -35,6 +34,7 @@ import com.example.demo.repository.UserRepository;
 import com.example.demo.responses.ApiResponse;
 
 import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
 
 @Service
 public class AdminService {
@@ -84,6 +84,7 @@ public class AdminService {
         return new ApiResponse(Map.of("message", "User status updated successfully"));
     }
     
+    @Transactional
     public ApiResponse createProduct(CreateProductRequest createProductRequest) {
         ProductBean product = new ProductBean();
         product.setName(createProductRequest.getName());
@@ -99,7 +100,8 @@ public class AdminService {
         productRepository.save(product);
         return new ApiResponse(null);
     }
-    
+
+    @Transactional
     public ApiResponse updateProduct(Long productId, UpdateProductRequest updateProductRequest) {
         Optional<ProductBean> productOpt = productRepository.findById(productId);
         
@@ -124,6 +126,7 @@ public class AdminService {
         return new ApiResponse(Map.of("message", "Product updated successfully"));
     }
     
+    @Transactional
     public ApiResponse deleteProduct(Long productId) {
         Optional<ProductBean> productOpt = productRepository.findById(productId);
         
@@ -147,6 +150,7 @@ public class AdminService {
         return new ApiResponse(Map.of("orders", orderInfoList));
     }
     
+    @Transactional
     public ApiResponse updateOrderStatus(Long orderId, UpdateOrderRequest request) {
         Optional<OrderBean> orderOpt = orderRepository.findById(orderId);
         
@@ -201,6 +205,7 @@ public class AdminService {
         return new ApiResponse(Map.of("message", "Order deleted successfully"));
     }
 
+    @Transactional
     public ApiResponse createPromotion(CreatePromotionRequest createPromotionRequest) {
 
         PromotionBean promotion = new PromotionBean();
@@ -216,6 +221,8 @@ public class AdminService {
         promotionRepository.save(promotion);
         return new ApiResponse(null);
     }
+
+    @Transactional
     public ApiResponse createCategory(CreateCategoryRequest createCategoryRequest) {
         // Assuming you have a CategoryBean and CategoryRepository similar to Product and Promotion
         CategoryBean category = new CategoryBean();
@@ -236,17 +243,17 @@ public class AdminService {
     private OrderInfo convertToOrderInfo(OrderBean order) {
         OrderInfo orderInfo = new OrderInfo();
         orderInfo.setId(order.getId());
-        orderInfo.setUserId(order.getUserId());
-        orderInfo.setOrderNumber(order.getOrderNumber());
+        orderInfo.setUserId(order.getUser().getId());
+        orderInfo.setMerchant_trade_no(order.getMerchantTradeNo());
         orderInfo.setStatus(order.getStatus());
-        orderInfo.setPaymentMethod(order.getPaymentMethod().name());
-        orderInfo.setIsPaid(order.getIsPaid());
+        orderInfo.setPaymentMethod(order.getPaymentMethod());
         orderInfo.setPaidAt(order.getPaidAt());
         orderInfo.setCancelledAt(order.getCancelledAt());
-        orderInfo.setShippingMethod(order.getShippingMethod().name());
+        orderInfo.setShippingMethod(order.getShippingMethod());
         orderInfo.setShippingAddress(order.getShippingAddress());
-        orderInfo.setShippingStatus(order.getShippingStatus().name());
-        orderInfo.setTotalPrice(order.getTotalPrice());
+        orderInfo.setShippingStatus(order.getShippingStatus());
+        orderInfo.setAmountCents(order.getAmountCents());
+        orderInfo.setCurrency(order.getCurrency());
         orderInfo.setCreatedAt(order.getCreatedAt());
         orderInfo.setUpdatedAt(order.getUpdatedAt());
         return orderInfo;

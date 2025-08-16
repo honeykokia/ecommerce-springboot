@@ -38,10 +38,18 @@ public class OrderBean {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
+    // @Column(name = "order_number", nullable = false, unique = true)
+    // private String orderNumber;
 
-    @Column(name = "order_number", nullable = false, unique = true)
-    private String orderNumber;
-    
+    @Column(name="merchant_trade_no", nullable = false, unique = true)
+    private String merchantTradeNo;
+
+    @Column(name = "amount_cents", nullable = false)
+    private Integer amountCents;
+
+    @Column(name = "currency", nullable = false)
+    private String currency;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private OrderStatus status;
@@ -49,9 +57,6 @@ public class OrderBean {
     @Enumerated(EnumType.STRING)
     @Column(name = "payment_method", nullable = false)
     private PaymentMethod paymentMethod;
-    
-    @Column(name = "is_paid", nullable = false)
-    private Boolean isPaid;
     
     @Column(name = "paid_at")
     private LocalDateTime paidAt;
@@ -69,23 +74,19 @@ public class OrderBean {
     @Enumerated(EnumType.STRING)
     @Column(name = "shipping_status", nullable = false)
     private ShippingStatus shippingStatus;
-    
-    @Column(name = "total_price", nullable = false)
-    private Integer totalPrice;
-    
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
     
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-    
-    // Foreign key column
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
-    
+
+    @Column(name = "trade_desc")
+    private String tradeDesc;
+
     // Foreign key relationship
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private UserBean user;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)

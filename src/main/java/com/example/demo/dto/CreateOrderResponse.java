@@ -3,9 +3,10 @@ package com.example.demo.dto;
 import lombok.Data;
 
 @Data
-public class PaymentCheckoutRequest {
-    private String merchantTradeNo;
+public class CreateOrderResponse {
+    private String merchant_trade_no;
     private int amountCents;
     private String itemName;
     private String tradeDesc;
 }
+

@@ -2,21 +2,28 @@ package com.example.demo.services;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.demo.bean.CartBean;
 import com.example.demo.bean.CartItemBean;
 import com.example.demo.bean.OrderBean;
 import com.example.demo.bean.OrderItemBean;
-import com.example.demo.dto.CheckoutRequest;
+import com.example.demo.dto.CreateOrderRequest;
+import com.example.demo.dto.CreateOrderResponse;
 import com.example.demo.dto.ErrorInfo;
 import com.example.demo.dto.OrderDetailInfo;
 import com.example.demo.dto.OrderInfo;
+import com.example.demo.dto.OrderSummary;
+import com.example.demo.enums.CartStatus;
 import com.example.demo.enums.OrderStatus;
+import com.example.demo.enums.ShippingStatus;
 import com.example.demo.exception.ApiException;
 import com.example.demo.repository.CartItemRepository;
+import com.example.demo.repository.CartRepository;
 import com.example.demo.repository.OrderItemRepository;
 import com.example.demo.repository.OrderRepository;
 import com.example.demo.responses.ApiResponse;
@@ -26,6 +33,9 @@ public class OrderService {
 
     @Autowired
     private OrderRepository orderRepository;
+
+    @Autowired
+    private CartRepository cartRepository;
 
     @Autowired
     private CartItemRepository cartItemRepository;
@@ -42,32 +52,50 @@ public class OrderService {
     }
 
     @Transactional
-    public ApiResponse createOrder(CheckoutRequest checkoutRequest) {
-
-        List<CartItemBean> carts = cartItemRepository.findByCartId(checkoutRequest.getCartId());
-
-        if (carts == null || carts.isEmpty()) {
+    public ApiResponse createOrder(Long userId,CreateOrderRequest request) {
+        Optional<CartBean> cartOpt = cartRepository.findByUserIdAndStatus(userId, CartStatus.ACTIVE);
+        CartBean  cart = cartOpt.orElseThrow(() -> {
             ErrorInfo errors = new ErrorInfo();
             errors.addError("cart", "Cart doesn't exist");
             throw new ApiException("Cart validation failed", 400, errors);
+        });
+
+        List<CartItemBean> carts = cartItemRepository.findByCartId(cart.getId());
+
+        if (carts == null || carts.isEmpty()) {
+            ErrorInfo errors = new ErrorInfo();
+            errors.addError("cart", "Cart not added");
+            throw new ApiException("Cart validation failed", 400, errors);
         }
+
 
         // Create a new order based on the checkout request and cart items
         OrderBean newOrder = new OrderBean();
-        newOrder.setUserId(carts.get(0).getCart().getUser().getId());
-        newOrder.setPaymentMethod(checkoutRequest.getPaymentMethod());
-        newOrder.setShippingMethod(checkoutRequest.getShippingMethod());
-        newOrder.setShippingAddress(checkoutRequest.getShippingAddress());
+        newOrder.setUser(carts.get(0).getCart().getUser());
+
+        newOrder.setPaymentMethod(request.getPaymentMethod());
+        newOrder.setShippingMethod(request.getShippingMethod());
+        newOrder.setShippingAddress(request.getShippingAddress());
+        newOrder.setShippingStatus(ShippingStatus.PENDING);
         newOrder.setStatus(OrderStatus.PENDING);
         newOrder.setCreatedAt(java.time.LocalDateTime.now());
         newOrder.setUpdatedAt(java.time.LocalDateTime.now());
 
-        int totalPrice = addOrderItemsFromCart(newOrder, carts);
-        newOrder.setTotalPrice(totalPrice);
+        String merchantTradeNo = ensureUniqueTradeNo("ORD");
+        newOrder.setMerchantTradeNo(merchantTradeNo);
+        
+        OrderSummary summary = addOrderItemsFromCart(newOrder, carts);
+        int AmountCents = summary.getAmount();
+        newOrder.setAmountCents(AmountCents);
+        newOrder.setTradeDesc(request.getTradeDesc());
         orderRepository.save(newOrder);
 
-        OrderInfo orderInfo = convertToOrderInfo(newOrder);
-        return new ApiResponse(Map.of("order", orderInfo));
+        CreateOrderResponse response = new CreateOrderResponse();
+        response.setMerchant_trade_no(newOrder.getMerchantTradeNo());
+        response.setAmountCents(newOrder.getAmountCents());
+        response.setItemName(summary.getItemName());
+        response.setTradeDesc(newOrder.getTradeDesc());
+        return new ApiResponse(Map.of("order", response));
     }
 
     public ApiResponse getOrderItems(Long orderId) {
@@ -79,12 +107,24 @@ public class OrderService {
         return new ApiResponse(Map.of("items", itemDetails));
     }
 
+    public String ensureUniqueTradeNo(String orderId) {
+        return (orderId + System.currentTimeMillis()).substring(0, Math.min(20, (orderId + System.currentTimeMillis()).length()));
+    }
+
     public OrderInfo convertToOrderInfo(OrderBean order) {
         OrderInfo orderInfo = new OrderInfo();
         orderInfo.setId(order.getId());
-        orderInfo.setUserId(order.getUserId());
-        orderInfo.setTotalPrice(order.getTotalPrice());
+        orderInfo.setUserId(order.getUser().getId());
+        orderInfo.setMerchant_trade_no(order.getMerchantTradeNo());
+        orderInfo.setAmountCents(order.getAmountCents());
+        orderInfo.setCurrency(order.getCurrency());
         orderInfo.setStatus(order.getStatus());
+        orderInfo.setPaymentMethod(order.getPaymentMethod());
+        orderInfo.setPaidAt(order.getPaidAt());
+        orderInfo.setCancelledAt(order.getCancelledAt());
+        orderInfo.setShippingMethod(order.getShippingMethod());
+        orderInfo.setShippingAddress(order.getShippingAddress());
+        orderInfo.setShippingStatus(order.getShippingStatus());
         orderInfo.setCreatedAt(order.getCreatedAt());
         orderInfo.setUpdatedAt(order.getUpdatedAt());
         return orderInfo;
@@ -101,8 +141,9 @@ public class OrderService {
         return orderDetailInfo;
     }
 
-    public int addOrderItemsFromCart(OrderBean order, List<CartItemBean> cartItems) {
-        int total = 0;
+    public OrderSummary addOrderItemsFromCart(OrderBean order, List<CartItemBean> cartItems) {
+        Integer amount = 0;
+        String itemName = "";
         for (CartItemBean c : cartItems) {
             OrderItemBean oi = new OrderItemBean();
             oi.setProductId(c.getProduct().getId());                 
@@ -111,8 +152,10 @@ public class OrderService {
             oi.setQuantity(c.getQuantity());
             oi.setTotalPrice(c.getUnitPrice() * c.getQuantity());
             order.addItem(oi);
-            total += oi.getTotalPrice();
+            amount += oi.getTotalPrice();
+            itemName += oi.getProductName() + "x" + oi.getQuantity() + "#";
         }
-        return total;
-    }   
+
+        return new OrderSummary(amount, itemName);
+    }
 }
