@@ -74,8 +74,7 @@ public class UpdateAvatarValidator implements CustValidator<UpdateUserAvatarRequ
             throw new ApiException("File upload failed", 500, errorInfo);
         }
 
-        
-        target.setImage("/upload/" + filename);
+        user.setImage("/upload/" + filename);
         return user;
     }
 

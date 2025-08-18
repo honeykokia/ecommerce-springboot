@@ -3,7 +3,6 @@ package com.example.demo.services;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,14 +17,15 @@ public class PaymentService {
 
     // private ConcurrentHashMap<String, String> orderStatus = new ConcurrentHashMap<>();
 
-    @Autowired
-    private PaymentParamsFactory factory;
+    private final PaymentParamsFactory factory;
+    private final EcpayProps props;
+    private final EcpaySigner signer;
 
-    @Autowired
-    private EcpayProps props;
-
-    @Autowired
-    private EcpaySigner signer;
+    public PaymentService(PaymentParamsFactory factory, EcpayProps props) {
+        this.factory = factory;
+        this.props = props;
+        this.signer = new EcpaySigner(props.getHashKey(), props.getHashIv());
+    }
 
     public String checkout(Long userId, PaymentCheckoutRequest request) {
 

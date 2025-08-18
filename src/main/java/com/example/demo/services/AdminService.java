@@ -58,6 +58,7 @@ public class AdminService {
     private EntityManager em;
 
     public ApiResponse getAllUsers() {
+
         List<UserBean> users = userRepository.findAll();
         
         List<UserInfo> userInfoList = users.stream()
@@ -77,8 +78,7 @@ public class AdminService {
         }
         
         UserBean user = userOpt.get();
-        // Here you would update user status - this depends on your UserBean having a status field
-        // For now, we'll just return success since the schema doesn't show a status field
+        user.setStatus(request.getStatus());
         
         userRepository.save(user);
         return new ApiResponse(Map.of("message", "User status updated successfully"));
@@ -235,8 +235,10 @@ public class AdminService {
     
     private UserInfo convertToUserInfo(UserBean user) {
         UserInfo userInfo = new UserInfo();
+        userInfo.setId(user.getId());
         userInfo.setName(user.getName());
-        userInfo.setEmail(user.getEmail());
+        userInfo.setStatus(user.getStatus());
+        userInfo.setRole(user.getRole());
         return userInfo;
     }
     

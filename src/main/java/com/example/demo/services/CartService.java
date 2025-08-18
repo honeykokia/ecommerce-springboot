@@ -56,8 +56,10 @@ public class CartService {
         List<CartInfo> cartInfoList = cartItems.stream()
             .map(item -> {
                 CartInfo info = new CartInfo();
-                info.setCartItemId(item.getId());
+                info.setProductId(item.getProduct().getId());
                 info.setUserId(userId);
+                info.setQuantity(item.getQuantity());
+                info.setUnitPrice(item.getUnitPrice());
                 info.setCreateAt(item.getCart().getCreatedAt());
                 return info;
             })
