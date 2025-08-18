@@ -3,6 +3,7 @@ package com.example.demo.services;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,7 +18,7 @@ import com.example.demo.dto.LoginInfo;
 import com.example.demo.dto.LoginRequest;
 import com.example.demo.dto.RegisterRequest;
 import com.example.demo.dto.ResendVerificationEmailRequest;
-import com.example.demo.dto.UpdatePasswordRequest;
+import com.example.demo.dto.ChangePasswordRequest;
 import com.example.demo.dto.UpdateUserAvatarRequqst;
 import com.example.demo.dto.UpdateUserRequest;
 import com.example.demo.dto.UserInfo;
@@ -83,13 +84,11 @@ public class UserService {
     public ApiResponse login(LoginRequest loginRequest) {
 
         UserBean user = loginValidator.validate(loginRequest);       
-        String token = jwtUtil.generateToken(user.getEmail(), user.getId());
+        String token = jwtUtil.generateToken(user.getEmail(),user.getId());
 
         LoginInfo loginInfo = new LoginInfo();
         loginInfo.setName(user.getName());
-        loginInfo.setEmail(user.getEmail());
         loginInfo.setToken(token);
-
         return new ApiResponse(Map.of("user",loginInfo));
     }
 
@@ -108,7 +107,7 @@ public class UserService {
         user.setCity(null);
         user.setCountry(null);
         user.setAddress(null);
-        user.setRole(UserRole.MEMBER);
+        user.setRole(UserRole.USER);
         user.setStatus(UserStatus.INACTIVE);
         user.setCreatedAt(LocalDateTime.now());
         user.setLastLoginAt(LocalDateTime.now());
@@ -121,7 +120,9 @@ public class UserService {
 
         UserInfo userInfo = new UserInfo();
         userInfo.setName(user.getName());
-        userInfo.setEmail(user.getEmail());
+        userInfo.setId(user.getId());
+        userInfo.setStatus(user.getStatus());
+        userInfo.setRole(user.getRole());
 
         return new ApiResponse(Map.of("user", userInfo));
 
@@ -175,13 +176,12 @@ public class UserService {
     public ApiResponse updateAvatar(UpdateUserAvatarRequqst updateUserAvatarRequqst) {
 
         UserBean user = updateAvatarValidator.validate(updateUserAvatarRequqst);
-        user.setImage(updateUserAvatarRequqst.getImage());
         userRepository.save(user);
 
         return new ApiResponse(null);
     }
 
-    public ApiResponse changePassword(UpdatePasswordRequest updatePasswordRequest) {
+    public ApiResponse changePassword(ChangePasswordRequest updatePasswordRequest) {
         UserBean user = changePasswordValidator.validate(updatePasswordRequest);
 
         String encodedPassword = passwordEncoder.encode(updatePasswordRequest.getNewPassword());

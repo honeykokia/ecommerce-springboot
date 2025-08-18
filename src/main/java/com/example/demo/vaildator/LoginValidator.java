@@ -42,12 +42,12 @@ public class LoginValidator implements CustValidator<LoginRequest,UserBean> {
         UserBean user = userOpt.get();
 
         if (!passwordEncoder.matches(target.getPassword(), user.getPassword())) {
-            errorInfo.addError("password", "email or password is incorrect");
+            errorInfo.addError("email", "email or password is incorrect");
             throw new ApiException("Validation failed", 400,errorInfo);
         }
 
         if (!user.getStatus().equals(UserStatus.ACTIVE)) {
-            errorInfo.addError("email", "User is not active");
+            errorInfo.addError("email", "Email is not active");
             throw new ApiException("Validation failed", 400, errorInfo);
         }
 

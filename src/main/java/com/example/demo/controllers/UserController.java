@@ -19,7 +19,7 @@ import com.example.demo.dto.ForgetPasswordRequest;
 import com.example.demo.dto.LoginRequest;
 import com.example.demo.dto.RegisterRequest;
 import com.example.demo.dto.ResendVerificationEmailRequest;
-import com.example.demo.dto.UpdatePasswordRequest;
+import com.example.demo.dto.ChangePasswordRequest;
 import com.example.demo.dto.UpdateUserAvatarRequqst;
 import com.example.demo.dto.UpdateUserRequest;
 import com.example.demo.responses.ApiResponse;
@@ -89,19 +89,18 @@ public class UserController {
     }
     @PutMapping("/me/avatar")
     public ResponseEntity<?> updateAvatar(@AuthenticationPrincipal Long userId ,
-            @RequestParam("file") MultipartFile file, @RequestParam("image") String image) {
+            @RequestParam("file") MultipartFile file) {
 
         UpdateUserAvatarRequqst updateUserAvatar = new UpdateUserAvatarRequqst();
         updateUserAvatar.setUserId(userId);
         updateUserAvatar.setFile(file);
-        updateUserAvatar.setImage(image);
         ApiResponse response = userService.updateAvatar(updateUserAvatar);
         return ResponseEntity.ok().body(response);
     }
 
     @PatchMapping("/me/password")
     public ResponseEntity<?> changePassword(@AuthenticationPrincipal Long userId,
-            @Valid @RequestBody UpdatePasswordRequest updatePasswordRequest,BindingResult result) {
+            @Valid @RequestBody ChangePasswordRequest updatePasswordRequest,BindingResult result) {
         validationHelper.validateOrThrow(result);
 
         updatePasswordRequest.setUserId(userId);

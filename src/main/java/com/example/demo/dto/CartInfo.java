@@ -6,7 +6,9 @@ import lombok.Data;
 
 @Data
 public class CartInfo {
-    private Long cartItemId;
+    private Long productId;
     private Long userId;
+    private Integer quantity;
+    private Integer unitPrice;
     private LocalDateTime createAt;  // Note: Keep same name as API spec
 }

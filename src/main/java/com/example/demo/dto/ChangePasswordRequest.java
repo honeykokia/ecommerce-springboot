@@ -7,17 +7,17 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
-public class UpdatePasswordRequest {
+public class ChangePasswordRequest {
     @JsonIgnore
     @Schema(hidden = true)
     private Long userId;
 
-    @NotBlank(message = "Old password is required")
+    @NotBlank(message = "old password is required")
     private String oldPassword;
 
-    @NotBlank(message = "New password is required")
+    @NotBlank(message = "new password is required")
     private String newPassword;
 
-    @NotBlank(message = "Confirm new password is required")
+    @NotBlank(message = "confirm new password is required")
     private String newConfirmPassword;
 }

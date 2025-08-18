@@ -6,7 +6,6 @@ import lombok.Data;
 public class LoginInfo {
 
     private String name;
-    private String email;
     private String token;
 
 }
