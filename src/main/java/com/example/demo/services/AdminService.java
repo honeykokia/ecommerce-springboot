@@ -19,8 +19,10 @@ import com.example.demo.dto.CreateProductRequest;
 import com.example.demo.dto.CreatePromotionRequest;
 import com.example.demo.dto.ErrorInfo;
 import com.example.demo.dto.OrderInfo;
+import com.example.demo.dto.UpdateCategoryRequest;
 import com.example.demo.dto.UpdateOrderRequest;
 import com.example.demo.dto.UpdateProductRequest;
+import com.example.demo.dto.UpdatePromotionImageRequest;
 import com.example.demo.dto.UpdateUserStatusRequest;
 import com.example.demo.dto.UserInfo;
 import com.example.demo.enums.OrderStatus;
@@ -32,6 +34,7 @@ import com.example.demo.repository.ProductRepository;
 import com.example.demo.repository.PromotionRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.responses.ApiResponse;
+import com.example.demo.vaildator.UpdatePromotionImageValidator;
 
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
@@ -56,6 +59,9 @@ public class AdminService {
     
     @Autowired
     private EntityManager em;
+
+    @Autowired
+    private UpdatePromotionImageValidator updatePromotionImageValidator;
 
     public ApiResponse getAllUsers() {
 
@@ -231,6 +237,60 @@ public class AdminService {
 
         categoryRepository.save(category);
         return new ApiResponse(null);
+    }
+
+    @Transactional
+    public ApiResponse deletePromotion(Long promotionId) {
+        Optional<PromotionBean> promotionOpt = promotionRepository.findById(promotionId);
+        
+        if (promotionOpt.isEmpty()) {
+            ErrorInfo errorInfo = new ErrorInfo();
+            errorInfo.addError("promotionId", "Promotion not found");
+            throw new ApiException("Promotion not found", 404, errorInfo);
+        }
+        
+        promotionRepository.deleteById(promotionId);
+        return new ApiResponse(Map.of("message", "Promotion deleted successfully"));
+    }
+
+    @Transactional
+    public ApiResponse updatePromotionImage(Long promotionId, UpdatePromotionImageRequest request) {
+        request.setPromotionId(promotionId);
+        PromotionBean promotion = updatePromotionImageValidator.validate(request);
+        promotionRepository.save(promotion);
+        return new ApiResponse(Map.of("message", "Promotion image updated successfully"));
+    }
+
+    @Transactional
+    public ApiResponse updateCategory(Long categoryId, UpdateCategoryRequest updateCategoryRequest) {
+        Optional<CategoryBean> categoryOpt = categoryRepository.findById(categoryId);
+        
+        if (categoryOpt.isEmpty()) {
+            ErrorInfo errorInfo = new ErrorInfo();
+            errorInfo.addError("categoryId", "Category not found");
+            throw new ApiException("Category not found", 404, errorInfo);
+        }
+        
+        CategoryBean category = categoryOpt.get();
+        if (updateCategoryRequest.getName() != null) category.setName(updateCategoryRequest.getName());
+        if (updateCategoryRequest.getDescription() != null) category.setDescription(updateCategoryRequest.getDescription());
+
+        categoryRepository.save(category);
+        return new ApiResponse(Map.of("message", "Category updated successfully"));
+    }
+
+    @Transactional
+    public ApiResponse deleteCategory(Long categoryId) {
+        Optional<CategoryBean> categoryOpt = categoryRepository.findById(categoryId);
+        
+        if (categoryOpt.isEmpty()) {
+            ErrorInfo errorInfo = new ErrorInfo();
+            errorInfo.addError("categoryId", "Category not found");
+            throw new ApiException("Category not found", 404, errorInfo);
+        }
+        
+        categoryRepository.deleteById(categoryId);
+        return new ApiResponse(Map.of("message", "Category deleted successfully"));
     }
     
     private UserInfo convertToUserInfo(UserBean user) {
