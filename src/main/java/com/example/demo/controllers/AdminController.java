@@ -11,13 +11,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.dto.CreateCategoryRequest;
 import com.example.demo.dto.CreateProductRequest;
 import com.example.demo.dto.CreatePromotionRequest;
+import com.example.demo.dto.UpdateCategoryRequest;
 import com.example.demo.dto.UpdateOrderRequest;
 import com.example.demo.dto.UpdateProductRequest;
+import com.example.demo.dto.UpdatePromotionImageRequest;
 import com.example.demo.dto.UpdateUserStatusRequest;
 import com.example.demo.enums.UserRole;
 import com.example.demo.exception.ApiException;
@@ -132,6 +136,53 @@ public class AdminController {
             throw new ApiException("Access denied", 403, null);
         }
         ApiResponse response = adminService.createCategory(createCategoryRequest);
+        return ResponseEntity.ok().body(response);
+    }
+
+    @DeleteMapping("/promotions/{promotionId}")
+    public ResponseEntity<?> deletePromotion(@AuthenticationPrincipal Long userId, @PathVariable Long promotionId) {
+        if (!accessGuard.hasRole(userId, UserRole.ADMIN)) {
+            throw new ApiException("Access denied", 403, null);
+        }
+        ApiResponse response = adminService.deletePromotion(promotionId);
+        return ResponseEntity.ok().body(response);
+    }
+
+    @PutMapping("/promotions/{promotionId}/image")
+    public ResponseEntity<?> updatePromotionImage(
+        @AuthenticationPrincipal Long userId,
+        @PathVariable Long promotionId,
+        @RequestParam("file") MultipartFile file) {
+        if (!accessGuard.hasRole(userId, UserRole.ADMIN)) {
+            throw new ApiException("Access denied", 403, null);
+        }
+        
+        UpdatePromotionImageRequest updatePromotionImageRequest = new UpdatePromotionImageRequest();
+        updatePromotionImageRequest.setPromotionId(promotionId);
+        updatePromotionImageRequest.setFile(file);
+        
+        ApiResponse response = adminService.updatePromotionImage(promotionId, updatePromotionImageRequest);
+        return ResponseEntity.ok().body(response);
+    }
+
+    @PutMapping("/categories/{categoryId}")
+    public ResponseEntity<?> updateCategory(
+        @AuthenticationPrincipal Long userId,
+        @PathVariable Long categoryId,
+        @RequestBody UpdateCategoryRequest updateCategoryRequest) {
+        if (!accessGuard.hasRole(userId, UserRole.ADMIN)) {
+            throw new ApiException("Access denied", 403, null);
+        }
+        ApiResponse response = adminService.updateCategory(categoryId, updateCategoryRequest);
+        return ResponseEntity.ok().body(response);
+    }
+
+    @DeleteMapping("/categories/{categoryId}")
+    public ResponseEntity<?> deleteCategory(@AuthenticationPrincipal Long userId, @PathVariable Long categoryId) {
+        if (!accessGuard.hasRole(userId, UserRole.ADMIN)) {
+            throw new ApiException("Access denied", 403, null);
+        }
+        ApiResponse response = adminService.deleteCategory(categoryId);
         return ResponseEntity.ok().body(response);
     }
 }
