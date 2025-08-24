@@ -24,8 +24,8 @@ public class OrderController {
     private OrderService orderService;
 
     @GetMapping("/me")
-    public ResponseEntity<?> getOrders() {
-        ApiResponse response = orderService.getOrders();
+    public ResponseEntity<?> getOrders(@AuthenticationPrincipal Long userId) {
+        ApiResponse response = orderService.getOrders(userId);
         return ResponseEntity.ok(response);
     }
 
@@ -35,7 +35,13 @@ public class OrderController {
         ApiResponse response = orderService.createOrder(userId, createOrderRequest);
         return ResponseEntity.ok(response);
     }
-    
+
+    @GetMapping("/{orderId}/status")
+    public ResponseEntity<?> getOrderStatusById(@PathVariable Long orderId) {
+        ApiResponse response = orderService.getOrderStatusById(orderId);
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping("/{orderId}/items")
     public ResponseEntity<?> getOrderItems(@PathVariable Long orderId) {
 

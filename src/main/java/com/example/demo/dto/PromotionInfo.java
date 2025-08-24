@@ -15,7 +15,7 @@ public class PromotionInfo {
     private DiscountType discountType;
     private Integer discountValue;
     private String description;
-    private String imageUrl;
+    private String imageURL;
     private Boolean isActive;
     private LocalDate startDate;
     private LocalDate endDate;

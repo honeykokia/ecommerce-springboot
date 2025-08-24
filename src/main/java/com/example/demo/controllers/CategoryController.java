@@ -19,10 +19,6 @@ public class CategoryController {
     @GetMapping
     public ResponseEntity<?> getCategories() {
         ApiResponse response = categoryService.getCategories();
-
-        // category1.setName("耳機");
-        // category1.setDescription("各式藍芽耳機");
-        // ApiResponse response = new ApiResponse(Map.of("categories", List.of(category1)));
         return ResponseEntity.ok(response);
     }
 

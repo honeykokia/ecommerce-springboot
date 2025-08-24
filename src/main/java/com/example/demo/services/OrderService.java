@@ -43,12 +43,25 @@ public class OrderService {
     @Autowired
     private OrderItemRepository orderItemRepository;
 
-    public ApiResponse getOrders(){
-        List<OrderBean> orders = orderRepository.findAll();
+    public ApiResponse getOrders(Long userId){
+        List<OrderBean> orders = orderRepository.findByUserId(userId);
         List<OrderInfo> orderInfos = orders.stream()
             .map(this::convertToOrderInfo)
             .toList();
         return new ApiResponse(Map.of("orders", orderInfos));
+    }
+
+    public ApiResponse getOrderStatusById(Long orderId){
+        Optional<OrderStatus> orderStatusOpt = orderRepository.findStatusById(orderId);
+
+        if (orderStatusOpt.isEmpty()) {
+            ErrorInfo errors = new ErrorInfo();
+            errors.addError("order", "Order not found");
+            throw new ApiException("Order not found", 404, errors);
+        }
+        return new ApiResponse(Map.of("order", Map.of(
+            "status", orderStatusOpt.get().name()
+        )));
     }
 
     @Transactional
@@ -80,6 +93,7 @@ public class OrderService {
         newOrder.setStatus(OrderStatus.PENDING);
         newOrder.setCreatedAt(java.time.LocalDateTime.now());
         newOrder.setUpdatedAt(java.time.LocalDateTime.now());
+        newOrder.setCurrency("TWD");
 
         String merchantTradeNo = ensureUniqueTradeNo("ORD");
         newOrder.setMerchantTradeNo(merchantTradeNo);
@@ -91,7 +105,8 @@ public class OrderService {
         orderRepository.save(newOrder);
 
         CreateOrderResponse response = new CreateOrderResponse();
-        response.setMerchant_trade_no(newOrder.getMerchantTradeNo());
+        response.setOrderId(newOrder.getId());
+        response.setMerchantTradeNo(newOrder.getMerchantTradeNo());
         response.setAmountCents(newOrder.getAmountCents());
         response.setItemName(summary.getItemName());
         response.setTradeDesc(newOrder.getTradeDesc());
@@ -115,7 +130,7 @@ public class OrderService {
         OrderInfo orderInfo = new OrderInfo();
         orderInfo.setId(order.getId());
         orderInfo.setUserId(order.getUser().getId());
-        orderInfo.setMerchant_trade_no(order.getMerchantTradeNo());
+        orderInfo.setMerchantTradeNo(order.getMerchantTradeNo());
         orderInfo.setAmountCents(order.getAmountCents());
         orderInfo.setCurrency(order.getCurrency());
         orderInfo.setStatus(order.getStatus());
