@@ -13,16 +13,22 @@ import com.example.demo.bean.CategoryBean;
 import com.example.demo.bean.OrderBean;
 import com.example.demo.bean.ProductBean;
 import com.example.demo.bean.PromotionBean;
+import com.example.demo.bean.TagBean;
 import com.example.demo.bean.UserBean;
 import com.example.demo.dto.CreateCategoryRequest;
 import com.example.demo.dto.CreateProductRequest;
 import com.example.demo.dto.CreatePromotionRequest;
+import com.example.demo.dto.CreateTagRequest;
 import com.example.demo.dto.ErrorInfo;
 import com.example.demo.dto.OrderInfo;
+import com.example.demo.dto.TagInfo;
 import com.example.demo.dto.UpdateCategoryRequest;
 import com.example.demo.dto.UpdateOrderRequest;
+import com.example.demo.dto.UpdateProductImageRequest;
 import com.example.demo.dto.UpdateProductRequest;
 import com.example.demo.dto.UpdatePromotionImageRequest;
+import com.example.demo.dto.UpdatePromotionRequest;
+import com.example.demo.dto.UpdateTagRequest;
 import com.example.demo.dto.UpdateUserStatusRequest;
 import com.example.demo.dto.UserInfo;
 import com.example.demo.enums.OrderStatus;
@@ -32,9 +38,12 @@ import com.example.demo.repository.CategoryRepository;
 import com.example.demo.repository.OrderRepository;
 import com.example.demo.repository.ProductRepository;
 import com.example.demo.repository.PromotionRepository;
+import com.example.demo.repository.TagRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.responses.ApiResponse;
+import com.example.demo.vaildator.UpdateProductImageValidator;
 import com.example.demo.vaildator.UpdatePromotionImageValidator;
+import com.example.demo.vaildator.UpdatePromotionValidator;
 
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
@@ -56,12 +65,22 @@ public class AdminService {
 
     @Autowired
     private CategoryRepository categoryRepository;
-    
+
+    @Autowired
+    private TagRepository tagRepository;
+
+    @Autowired
+    private UpdatePromotionValidator updatePromotionValidator;
+
     @Autowired
     private EntityManager em;
 
     @Autowired
     private UpdatePromotionImageValidator updatePromotionImageValidator;
+
+    @Autowired
+    private UpdateProductImageValidator updateProductImageValidator;
+
 
     public ApiResponse getAllUsers() {
 
@@ -110,17 +129,17 @@ public class AdminService {
     @Transactional
     public ApiResponse updateProduct(Long productId, UpdateProductRequest updateProductRequest) {
         Optional<ProductBean> productOpt = productRepository.findById(productId);
-        
+
         if (productOpt.isEmpty()) {
             ErrorInfo errorInfo = new ErrorInfo();
             errorInfo.addError("productId", "Product not found");
             throw new ApiException("Product not found", 404, errorInfo);
         }
-        
+
         ProductBean product = productOpt.get();
         if (updateProductRequest.getName() != null) product.setName(updateProductRequest.getName());
-        if (updateProductRequest.getPrice() != null) product.setPrice(updateProductRequest.getPrice());
-        if (updateProductRequest.getImageUrl() != null) product.setImageUrl(updateProductRequest.getImageUrl());
+        if (updateProductRequest.getOriginalPrice() != null) product.setPrice(updateProductRequest.getOriginalPrice());
+        // if (updateProductRequest.getImageURL() != null) product.get().setImageUrl(updateProductRequest.getImageURL());
         if (updateProductRequest.getInStock() != null) product.setInStock(updateProductRequest.getInStock());
         if (updateProductRequest.getRating() != null) product.setRating(updateProductRequest.getRating());
         if (updateProductRequest.getSoldCount() != null) product.setSoldCount(updateProductRequest.getSoldCount());
@@ -132,6 +151,14 @@ public class AdminService {
         return new ApiResponse(Map.of("message", "Product updated successfully"));
     }
     
+    @Transactional
+    public ApiResponse updateProductImage(UpdateProductImageRequest request) {
+        ProductBean product = updateProductImageValidator.validate(request);
+        productRepository.save(product);
+        return new ApiResponse(Map.of("message", "Product image updated successfully"));
+    }
+
+
     @Transactional
     public ApiResponse deleteProduct(Long productId) {
         Optional<ProductBean> productOpt = productRepository.findById(productId);
@@ -229,6 +256,34 @@ public class AdminService {
     }
 
     @Transactional
+    public ApiResponse updatePromotion(UpdatePromotionRequest updatePromotionRequest) {
+        PromotionBean promotionBean = updatePromotionValidator.validate(updatePromotionRequest);
+
+        if (updatePromotionRequest.getName() != null) {
+            promotionBean.setName(updatePromotionRequest.getName());
+        }
+        if (updatePromotionRequest.getDiscountType() != null) {
+            promotionBean.setDiscountType(updatePromotionRequest.getDiscountType());
+        }
+        if (updatePromotionRequest.getDiscountValue() != null) {
+            promotionBean.setDiscountValue(updatePromotionRequest.getDiscountValue());
+        }
+        if (updatePromotionRequest.getDescription() != null) {
+            promotionBean.setDescription(updatePromotionRequest.getDescription());
+        }
+        if (updatePromotionRequest.getIsActive() != null) {
+            promotionBean.setIsActive(updatePromotionRequest.getIsActive());
+        }
+        if (updatePromotionRequest.getStartDate() != null) {
+            promotionBean.setStartDate(updatePromotionRequest.getStartDate());
+        }
+        if (updatePromotionRequest.getEndDate() != null) {
+            promotionBean.setEndDate(updatePromotionRequest.getEndDate());
+        }
+        // promotionRepository.save(promotionBean);
+        return new ApiResponse(null);
+    }
+    @Transactional
     public ApiResponse createCategory(CreateCategoryRequest createCategoryRequest) {
         // Assuming you have a CategoryBean and CategoryRepository similar to Product and Promotion
         CategoryBean category = new CategoryBean();
@@ -254,8 +309,7 @@ public class AdminService {
     }
 
     @Transactional
-    public ApiResponse updatePromotionImage(Long promotionId, UpdatePromotionImageRequest request) {
-        request.setPromotionId(promotionId);
+    public ApiResponse updatePromotionImage(UpdatePromotionImageRequest request) {
         PromotionBean promotion = updatePromotionImageValidator.validate(request);
         promotionRepository.save(promotion);
         return new ApiResponse(Map.of("message", "Promotion image updated successfully"));
@@ -292,7 +346,71 @@ public class AdminService {
         categoryRepository.deleteById(categoryId);
         return new ApiResponse(Map.of("message", "Category deleted successfully"));
     }
-    
+
+    @Transactional
+    public ApiResponse getTags() {
+        List<TagBean> tags = tagRepository.findAll();
+        List<TagInfo> tagInfoList = tags.stream()
+                .map(this::convertToTagInfo)
+                .collect(Collectors.toList());
+        return new ApiResponse(Map.of("tags", tagInfoList));
+    }
+
+    @Transactional
+    public ApiResponse createTag(CreateTagRequest createTagRequest){
+        TagBean tag = new TagBean();
+        tag.setName(createTagRequest.getName());
+        tag.setDescription(createTagRequest.getDescription());
+        tag.setColor(createTagRequest.getColor());
+        tagRepository.save(tag);
+        return new ApiResponse(Map.of("message", "Tag created successfully"));
+    }
+
+    @Transactional
+    public ApiResponse updateTag(Long tagId, UpdateTagRequest updateTagRequest) {
+
+        Optional<TagBean> tagOpt = tagRepository.findById(tagId);
+        if (tagOpt.isEmpty()) {
+            ErrorInfo errorInfo = new ErrorInfo();
+            errorInfo.addError("id", "Tag not found");
+            throw new ApiException("Tag not found", 404, errorInfo);
+        }
+
+        TagBean tag = tagOpt.get();
+        if (updateTagRequest.getName() != null) {
+            tag.setName(updateTagRequest.getName());
+        }
+        if (updateTagRequest.getDescription() != null) {
+            tag.setDescription(updateTagRequest.getDescription());
+        }
+        if (updateTagRequest.getColor() != null) {
+            tag.setColor(updateTagRequest.getColor());
+        }
+
+        tagRepository.save(tag);
+        return new ApiResponse(Map.of("message", "Tag updated successfully"));
+    }
+
+    public ApiResponse deleteTag(Long tagId) {
+        Optional<TagBean> tagOpt = tagRepository.findById(tagId);
+        if (tagOpt.isEmpty()) {
+            ErrorInfo errorInfo = new ErrorInfo();
+            errorInfo.addError("id", "Tag not found");
+            throw new ApiException("Tag not found", 404, errorInfo);
+        }
+        tagRepository.deleteById(tagId);
+        return new ApiResponse(Map.of("message", "Tag deleted successfully"));
+    }
+
+    private TagInfo convertToTagInfo(TagBean tag) {
+        TagInfo tagInfo = new TagInfo();
+        tagInfo.setId(tag.getId());
+        tagInfo.setName(tag.getName());
+        tagInfo.setDescription(tag.getDescription());
+        tagInfo.setColor(tag.getColor());
+        return tagInfo;
+    }
+
     private UserInfo convertToUserInfo(UserBean user) {
         UserInfo userInfo = new UserInfo();
         userInfo.setId(user.getId());
@@ -306,7 +424,7 @@ public class AdminService {
         OrderInfo orderInfo = new OrderInfo();
         orderInfo.setId(order.getId());
         orderInfo.setUserId(order.getUser().getId());
-        orderInfo.setMerchant_trade_no(order.getMerchantTradeNo());
+        orderInfo.setMerchantTradeNo(order.getMerchantTradeNo());
         orderInfo.setStatus(order.getStatus());
         orderInfo.setPaymentMethod(order.getPaymentMethod());
         orderInfo.setPaidAt(order.getPaidAt());

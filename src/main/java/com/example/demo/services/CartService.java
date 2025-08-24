@@ -11,12 +11,14 @@ import org.springframework.stereotype.Service;
 import com.example.demo.bean.CartBean;
 import com.example.demo.bean.CartItemBean;
 import com.example.demo.bean.ProductBean;
+import com.example.demo.bean.PromotionBean;
 import com.example.demo.bean.UserBean;
 import com.example.demo.dto.CartAddItemRequest;
 import com.example.demo.dto.CartInfo;
 import com.example.demo.dto.ErrorInfo;
 import com.example.demo.dto.UpdateCartProductRequest;
 import com.example.demo.enums.CartStatus;
+import com.example.demo.enums.DiscountType;
 import com.example.demo.exception.ApiException;
 import com.example.demo.repository.CartItemRepository;
 import com.example.demo.repository.CartRepository;
@@ -85,11 +87,14 @@ public class CartService {
             existingItem.setQuantity(existingItem.getQuantity() + cartAddItemRequest.getQuantity());
             cartItemRepository.save(existingItem);
         } else {
+
+            Integer discountPrice = calculateDiscountPrice(cartAddItemRequest.getProductId());
+
             // Add new item to cart
             CartItemBean newItem = new CartItemBean();
             newItem.setProduct(em.getReference(ProductBean.class, cartAddItemRequest.getProductId()));
             newItem.setQuantity(cartAddItemRequest.getQuantity());
-            newItem.setUnitPrice(productRepository.getPrice(cartAddItemRequest.getProductId()));
+            newItem.setUnitPrice(discountPrice);
             cart.addItem(newItem);
             cartItemRepository.save(newItem);
         }
@@ -154,6 +159,27 @@ public class CartService {
 
         
         return new ApiResponse(Map.of());
+    }
+
+    private Integer calculateDiscountPrice(Long productId) {
+
+        ProductBean product = productRepository.findById(productId)
+            .orElseThrow(() -> {
+                ErrorInfo errorInfo = new ErrorInfo();
+                errorInfo.addError("productId", "Product not found");
+                throw new ApiException("Product not found", 404, errorInfo);
+            });
+
+        Integer discount = 0;
+        if (product.getPromotion() != null) {
+            PromotionBean promotion = product.getPromotion();
+            if (promotion.getDiscountType().equals(DiscountType.PERCENTAGE)) {
+                discount = product.getPrice() * promotion.getDiscountValue() / 100;
+            } else if (promotion.getDiscountType().equals(DiscountType.FIXED)) {
+                discount = promotion.getDiscountValue();
+            }
+        }
+        return product.getPrice() - discount;
     }
 
     // /**

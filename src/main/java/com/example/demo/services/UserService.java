@@ -159,13 +159,27 @@ public class UserService {
             return new ApiException("User not found", 404, errorInfo);
         });
 
-        userBean.setName(updateUserRequest.getName());
-        userBean.setGender(updateUserRequest.getGender());
-        userBean.setBirthday(updateUserRequest.getBirthday());
-        userBean.setPhone(updateUserRequest.getPhone());
-        userBean.setCity(updateUserRequest.getCity());
-        userBean.setCountry(updateUserRequest.getCountry());
-        userBean.setAddress(updateUserRequest.getAddress());
+        if (updateUserRequest.getName() != null) {
+            userBean.setName(updateUserRequest.getName());
+        }
+        if (updateUserRequest.getGender() != null) {
+            userBean.setGender(updateUserRequest.getGender());
+        }
+        if (updateUserRequest.getBirthday() != null) {
+            userBean.setBirthday(updateUserRequest.getBirthday());
+        }
+        if (updateUserRequest.getPhone() != null) {
+            userBean.setPhone(updateUserRequest.getPhone());
+        }
+        if (updateUserRequest.getCity() != null) {
+            userBean.setCity(updateUserRequest.getCity());
+        }
+        if (updateUserRequest.getCountry() != null) {
+            userBean.setCountry(updateUserRequest.getCountry());
+        }
+        if (updateUserRequest.getAddress() != null) {
+            userBean.setAddress(updateUserRequest.getAddress());
+        }
 
         userRepository.save(userBean);
 

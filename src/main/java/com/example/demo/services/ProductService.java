@@ -9,14 +9,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.bean.ProductBean;
+import com.example.demo.bean.PromotionBean;
 import com.example.demo.bean.TagBean;
 import com.example.demo.dto.ErrorInfo;
 import com.example.demo.dto.ProductInfo;
 import com.example.demo.dto.TagInfo;
+import com.example.demo.enums.DiscountType;
 import com.example.demo.exception.ApiException;
 import com.example.demo.repository.ProductRepository;
 import com.example.demo.repository.ProductTagRepository;
 import com.example.demo.responses.ApiResponse;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class ProductService {
@@ -27,9 +31,10 @@ public class ProductService {
     @Autowired
     private ProductTagRepository productTagRepository;
 
+    @Transactional
     public ApiResponse getProducts(String name, Long categoryId) {
         List<ProductBean> products = productRepository.findProductsWithFilters(name, categoryId);
-        
+        // products = calculateDiscountedPrices(products);
         List<ProductInfo> productInfoList = products.stream()
                 .map(this::convertToProductInfo)
                 .collect(Collectors.toList());
@@ -51,12 +56,16 @@ public class ProductService {
         
         return new ApiResponse(productInfo);
     }
-    
+
     private ProductInfo convertToProductInfo(ProductBean product) {
+
+        Integer discountedPrice = calculateDiscountPrice(product);
+
         ProductInfo productInfo = new ProductInfo();
         productInfo.setId(product.getId());
         productInfo.setName(product.getName());
-        productInfo.setPrice(product.getPrice());
+        productInfo.setOriginalPrice(product.getPrice());
+        productInfo.setFinalPrice(discountedPrice);
         productInfo.setImageURL(product.getImageUrl());
         productInfo.setInStock(product.getInStock());
         productInfo.setRating(product.getRating());
@@ -80,5 +89,19 @@ public class ProductService {
         tagInfo.setId(tag.getId());
         tagInfo.setName(tag.getName());
         return tagInfo;
+    }
+
+    private Integer calculateDiscountPrice(ProductBean product) {
+
+        Integer discount = 0;
+        if (product.getPromotion() != null) {
+            PromotionBean promotion = product.getPromotion();
+            if (promotion.getDiscountType().equals(DiscountType.PERCENTAGE)) {
+                discount = product.getPrice() * promotion.getDiscountValue() / 100;
+            } else if (promotion.getDiscountType().equals(DiscountType.FIXED)) {
+                discount = promotion.getDiscountValue();
+            }
+        }
+        return product.getPrice() - discount;
     }
 }

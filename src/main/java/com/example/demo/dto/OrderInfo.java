@@ -13,7 +13,7 @@ import lombok.Data;
 public class OrderInfo {
     private Long id;
     private Long userId;
-    private String merchant_trade_no;
+    private String MerchantTradeNo;
     private Integer amountCents;
     private String currency;
     private OrderStatus status;

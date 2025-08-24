@@ -32,6 +32,8 @@ public class SecurityConfig {
                 .requestMatchers("/products").permitAll()
                 .requestMatchers("/categories").permitAll()
                 .requestMatchers("/upload/**").permitAll()
+                .requestMatchers("/payments/**").permitAll()
+                .requestMatchers("/orders/*/status").permitAll()
                 .anyRequest().authenticated()
             )
             .csrf(csrf -> csrf.disable()) // 可選擇關閉 CSRF（特別是 API）

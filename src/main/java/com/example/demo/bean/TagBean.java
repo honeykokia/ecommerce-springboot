@@ -24,5 +24,10 @@ public class TagBean {
     
     @Column(nullable = false)
     private String name;
+
+    private String description;
+
+    @Column(nullable = false, length = 7)
+    private String color;
 }
 

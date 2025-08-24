@@ -4,7 +4,8 @@ import lombok.Data;
 
 @Data
 public class CreateOrderResponse {
-    private String merchant_trade_no;
+    private Long orderId;
+    private String merchantTradeNo;
     private int amountCents;
     private String itemName;
     private String tradeDesc;

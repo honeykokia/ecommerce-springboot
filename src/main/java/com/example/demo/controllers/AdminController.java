@@ -18,10 +18,14 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.demo.dto.CreateCategoryRequest;
 import com.example.demo.dto.CreateProductRequest;
 import com.example.demo.dto.CreatePromotionRequest;
+import com.example.demo.dto.CreateTagRequest;
 import com.example.demo.dto.UpdateCategoryRequest;
 import com.example.demo.dto.UpdateOrderRequest;
+import com.example.demo.dto.UpdateProductImageRequest;
 import com.example.demo.dto.UpdateProductRequest;
 import com.example.demo.dto.UpdatePromotionImageRequest;
+import com.example.demo.dto.UpdatePromotionRequest;
+import com.example.demo.dto.UpdateTagRequest;
 import com.example.demo.dto.UpdateUserStatusRequest;
 import com.example.demo.enums.UserRole;
 import com.example.demo.exception.ApiException;
@@ -78,7 +82,25 @@ public class AdminController {
         if (!accessGuard.hasRole(callerId, UserRole.ADMIN)) {
             throw new ApiException("Access denied", 403, null);
         }
+
         ApiResponse response = adminService.updateProduct(productId, updateProductRequest);
+        return ResponseEntity.ok().body(response);
+    }
+
+    @PutMapping("/products/{productId}/image")
+    public ResponseEntity<?> UpdateProductImage(
+        @AuthenticationPrincipal Long userId,
+        @PathVariable Long productId,
+        @RequestParam("file") MultipartFile file) {
+        if (!accessGuard.hasRole(userId, UserRole.ADMIN)) {
+            throw new ApiException("Access denied", 403, null);
+        }
+
+        UpdateProductImageRequest updateProductImageRequest = new UpdateProductImageRequest();
+        updateProductImageRequest.setProductId(productId);
+        updateProductImageRequest.setFile(file);
+        ApiResponse response = adminService.updateProductImage(updateProductImageRequest);
+
         return ResponseEntity.ok().body(response);
     }
 
@@ -130,6 +152,19 @@ public class AdminController {
         return ResponseEntity.ok().body(response);
     }
 
+    @PutMapping("/promotions/{promotionId}")
+    public ResponseEntity<?> updatePromotion(
+        @AuthenticationPrincipal Long userId,
+        @PathVariable Long promotionId, 
+        @RequestBody UpdatePromotionRequest updatePromotionRequest) {
+        if (!accessGuard.hasRole(userId, UserRole.ADMIN)) {
+            throw new ApiException("Access denied", 403, null);
+        }
+        updatePromotionRequest.setId(promotionId);
+        ApiResponse response = adminService.updatePromotion(updatePromotionRequest);
+        return ResponseEntity.ok().body(response);
+    }
+
     @PostMapping("/categories")
     public ResponseEntity<?> createCategory(@AuthenticationPrincipal Long userId, @RequestBody CreateCategoryRequest createCategoryRequest) {
         if (!accessGuard.hasRole(userId, UserRole.ADMIN)) {
@@ -161,7 +196,7 @@ public class AdminController {
         updatePromotionImageRequest.setPromotionId(promotionId);
         updatePromotionImageRequest.setFile(file);
         
-        ApiResponse response = adminService.updatePromotionImage(promotionId, updatePromotionImageRequest);
+        ApiResponse response = adminService.updatePromotionImage(updatePromotionImageRequest);
         return ResponseEntity.ok().body(response);
     }
 
@@ -185,4 +220,41 @@ public class AdminController {
         ApiResponse response = adminService.deleteCategory(categoryId);
         return ResponseEntity.ok().body(response);
     }
+    
+    @GetMapping("/tags")
+    public ResponseEntity<?> getTags(@AuthenticationPrincipal Long userId) {
+        if (!accessGuard.hasRole(userId, UserRole.ADMIN)) {
+            throw new ApiException("Access denied", 403, null);
+        }
+        ApiResponse response = adminService.getTags();
+        return ResponseEntity.ok().body(response);
+    }
+
+    @PostMapping("/tags")
+    public ResponseEntity<?> createTag(@AuthenticationPrincipal Long userId, @RequestBody CreateTagRequest createTagRequest) {
+        if (!accessGuard.hasRole(userId, UserRole.ADMIN)) {
+            throw new ApiException("Access denied", 403, null);
+        }
+        ApiResponse response = adminService.createTag(createTagRequest);
+        return ResponseEntity.ok().body(response);
+    }
+
+    @PutMapping("/tags/{tagId}")
+    public ResponseEntity<?> updateTag(@AuthenticationPrincipal Long userId, @PathVariable Long tagId, @RequestBody UpdateTagRequest updateTagRequest) {
+        if (!accessGuard.hasRole(userId, UserRole.ADMIN)) {
+            throw new ApiException("Access denied", 403, null);
+        }
+        ApiResponse response = adminService.updateTag(tagId, updateTagRequest);
+        return ResponseEntity.ok().body(response);
+    }
+
+    @DeleteMapping("/tags/{tagId}")
+    public ResponseEntity<?> deleteTag(@AuthenticationPrincipal Long userId, @PathVariable Long tagId) {
+        if (!accessGuard.hasRole(userId, UserRole.ADMIN)) {
+            throw new ApiException("Access denied", 403, null);
+        }
+        ApiResponse response = adminService.deleteTag(tagId);
+        return ResponseEntity.ok().body(response);
+    }
+
 }
