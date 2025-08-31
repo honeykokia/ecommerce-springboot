@@ -1,11 +1,22 @@
 package com.example.demo.bean;
 
-import jakarta.persistence.*;
-import lombok.Data;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "tags")
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor // optional
 public class TagBean {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -13,5 +24,10 @@ public class TagBean {
     
     @Column(nullable = false)
     private String name;
+
+    private String description;
+
+    @Column(nullable = false, length = 7)
+    private String color;
 }
 

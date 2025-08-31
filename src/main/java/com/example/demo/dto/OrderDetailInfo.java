@@ -8,6 +8,6 @@ public class OrderDetailInfo {
     private Long productId;
     private String productName;
     private Integer quantity;
-    private Long price;
-    private Long totalPrice;
+    private Integer unitPrice;
+    private Integer totalPrice;
 }

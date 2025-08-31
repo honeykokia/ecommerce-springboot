@@ -1,21 +1,18 @@
 package com.example.demo.controllers;
 
-import java.util.List;
-import java.util.Map;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.apache.catalina.connector.Response;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.dto.CheckoutRequest;
-import com.example.demo.dto.OrderDetailInfo;
-import com.example.demo.dto.OrderInfo;
+import com.example.demo.dto.CreateOrderRequest;
 import com.example.demo.responses.ApiResponse;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import com.example.demo.services.OrderService;
 
 
 
@@ -23,63 +20,32 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RequestMapping("/orders")
 public class OrderController {
     
-    @GetMapping("/me")
-    public ResponseEntity<?> getOrders() {
-        OrderInfo orderInfo = new OrderInfo();
-        orderInfo.setId(1L);
-        orderInfo.setUserId(1L);
-        orderInfo.setOrderNumber("ORD123456789");
-        orderInfo.setStatus("PENDING");
-        orderInfo.setPaymentMethod("CREDIT_CARD");
-        orderInfo.setIsPaid(false);
-        orderInfo.setPaidAt(null);
-        orderInfo.setCancelledAt(null);
-        orderInfo.setShippingMethod("STANDARD");
-        orderInfo.setShippingAddress("台北市中正區某某路123號");
-        orderInfo.setShippingStatus("PENDING");
-        orderInfo.setTotalPrice(4000L);
-        orderInfo.setCreatedAt(java.time.LocalDateTime.now());
-        orderInfo.setUpdatedAt(java.time.LocalDateTime.now());
+    @Autowired
+    private OrderService orderService;
 
-        ApiResponse response = new ApiResponse(Map.of("order", List.of(orderInfo)));
+    @GetMapping("/me")
+    public ResponseEntity<?> getOrders(@AuthenticationPrincipal Long userId) {
+        ApiResponse response = orderService.getOrders(userId);
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/me")
-    public ResponseEntity<?> createOrder(@RequestBody CheckoutRequest checkoutRequest) {
+    public ResponseEntity<?> createOrder(@AuthenticationPrincipal Long userId, @RequestBody CreateOrderRequest createOrderRequest) {
 
-        
-        OrderInfo orderInfo = new OrderInfo();
-        orderInfo.setId(1L);
-        orderInfo.setUserId(1L);
-        orderInfo.setOrderNumber("ORD123456789");
-        orderInfo.setStatus("PENDING");
-        orderInfo.setPaymentMethod("CREDIT_CARD");
-        orderInfo.setIsPaid(false);
-        orderInfo.setPaidAt(null);
-        orderInfo.setCancelledAt(null);
-        orderInfo.setShippingMethod("STANDARD");
-        orderInfo.setShippingAddress("台北市中正區某某路123號");
-        orderInfo.setShippingStatus("PENDING");
-        orderInfo.setTotalPrice(4000L);
-        orderInfo.setCreatedAt(java.time.LocalDateTime.now());
-        orderInfo.setUpdatedAt(java.time.LocalDateTime.now());
-        ApiResponse response = new ApiResponse(Map.of("orders", orderInfo));
+        ApiResponse response = orderService.createOrder(userId, createOrderRequest);
         return ResponseEntity.ok(response);
     }
-    
+
+    @GetMapping("/{orderId}/status")
+    public ResponseEntity<?> getOrderStatusById(@PathVariable Long orderId) {
+        ApiResponse response = orderService.getOrderStatusById(orderId);
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping("/{orderId}/items")
     public ResponseEntity<?> getOrderItems(@PathVariable Long orderId) {
 
-        OrderDetailInfo orderDetailInfo = new OrderDetailInfo();
-        orderDetailInfo.setOrderId(1L);
-        orderDetailInfo.setProductId(1L);
-        orderDetailInfo.setProductName("商品名稱");
-        orderDetailInfo.setPrice(2000L);
-        orderDetailInfo.setQuantity(2);
-        orderDetailInfo.setTotalPrice(4000L);
-
-        ApiResponse response = new ApiResponse(Map.of("items", List.of(orderDetailInfo)));
+        ApiResponse response = orderService.getOrderItems(orderId);
         return ResponseEntity.ok(response);
     }
     

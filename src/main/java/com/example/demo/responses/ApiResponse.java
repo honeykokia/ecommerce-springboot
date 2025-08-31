@@ -17,5 +17,5 @@ public class ApiResponse {
         this.timestamp = LocalDateTime.now();
         this.data = data;
     }
-
+    
 }

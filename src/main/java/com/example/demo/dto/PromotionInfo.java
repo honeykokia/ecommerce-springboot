@@ -1,18 +1,24 @@
 package com.example.demo.dto;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
+import com.example.demo.enums.DiscountType;
+
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class PromotionInfo {
     private Long id;
     private String name;
-    private String discountType;
-    private Double discountValue;
+    private DiscountType discountType;
+    private Integer discountValue;
     private String description;
-    private LocalDateTime startDate;
-    private LocalDateTime endDate;
-    private String imageUrl;
+    private String imageURL;
     private Boolean isActive;
+    private LocalDate startDate;
+    private LocalDate endDate;
 }

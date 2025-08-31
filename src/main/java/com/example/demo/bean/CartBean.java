@@ -1,12 +1,28 @@
 package com.example.demo.bean;
 
-import jakarta.persistence.*;
-import lombok.Data;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "carts")
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor // optional
 public class CartBean {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,13 +36,20 @@ public class CartBean {
     
     @Column(name = "created_at")
     private LocalDateTime createdAt;
-    
+
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-    
-    // Foreign key relationships
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", insertable = false, updatable = false)
-    private UserBean user;
-    
+
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CartItemBean> items = new ArrayList<>();
+
+    public void addItem(CartItemBean item) {
+        items.add(item);
+        item.setCart(this);
+    }
+    public void removeItem(CartItemBean item) {
+        items.remove(item);
+        item.setCart(null);
+    }
+
 }

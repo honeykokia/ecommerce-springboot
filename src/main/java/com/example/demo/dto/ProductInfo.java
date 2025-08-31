@@ -10,7 +10,8 @@ public class ProductInfo {
     private Long promotionId;
     private Long categoryId;
     private String name;
-    private Integer price;
+    private Integer originalPrice;
+    private Integer finalPrice;
     private String imageURL;
     private Integer inStock;
     private Double rating;
