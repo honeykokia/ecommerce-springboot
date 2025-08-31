@@ -6,9 +6,11 @@ import com.example.demo.enums.DiscountType;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class PromotionInfo {
     private Long id;
     private String name;

@@ -57,7 +57,7 @@ public class ProductService {
         return new ApiResponse(productInfo);
     }
 
-    private ProductInfo convertToProductInfo(ProductBean product) {
+    public ProductInfo convertToProductInfo(ProductBean product) {
 
         Integer discountedPrice = calculateDiscountPrice(product);
 
@@ -66,14 +66,18 @@ public class ProductService {
         productInfo.setName(product.getName());
         productInfo.setOriginalPrice(product.getPrice());
         productInfo.setFinalPrice(discountedPrice);
-        productInfo.setImageURL(product.getImageUrl());
+        productInfo.setImageURL(product.getImageURL());
         productInfo.setInStock(product.getInStock());
         productInfo.setRating(product.getRating());
         productInfo.setSoldCount(product.getSoldCount());
         productInfo.setShortDescription(product.getShortDescription());
-        productInfo.setCategoryId(product.getCategory().getId());
-        productInfo.setPromotionId(product.getPromotion().getId());
 
+        if (product.getCategory() != null){
+            productInfo.setCategoryId(product.getCategory().getId());
+        }
+        if (product.getPromotion() != null) {
+            productInfo.setPromotionId(product.getPromotion().getId());
+        }
         // Get tags for this product
         List<TagBean> tags = productTagRepository.findTagsByProductId(product.getId());
         List<TagInfo> tagInfos = tags.stream()

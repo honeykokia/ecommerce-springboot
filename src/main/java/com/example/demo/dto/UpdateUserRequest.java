@@ -19,22 +19,16 @@ public class UpdateUserRequest {
     @NotBlank(message = "Name is required")
     private String name;
     
-    @NotNull(message = "Gender is required")
     private Byte gender;
 
-    @NotNull(message = "birthday is required")
     @Past(message = "birthday must be a past date")
     private LocalDate birthday;
 
-    @NotBlank(message = "phone is required")
     private String phone;
     
-    @NotBlank(message = "city is required")
     private String city;
 
-    @NotBlank(message = "country is required")
     private String country;
 
-    @NotBlank(message = "address is required")
     private String address;
 }

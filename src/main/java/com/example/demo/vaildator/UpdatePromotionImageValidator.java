@@ -75,7 +75,7 @@ public class UpdatePromotionImageValidator implements CustValidator<UpdatePromot
             throw new ApiException("File upload failed", 500, errorInfo);
         }
 
-        promotion.setImageUrl("/upload/" + filename);
+        promotion.setImageURL("/upload/" + filename);
         return promotion;
     }
 
