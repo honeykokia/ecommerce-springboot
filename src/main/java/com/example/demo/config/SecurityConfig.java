@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
@@ -27,11 +28,12 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/users/login").permitAll()
                 .requestMatchers("/users/register").permitAll()
-                .requestMatchers("/users/forget-password").permitAll()
+                .requestMatchers("/users/forgot-password").permitAll()
+                .requestMatchers("/users/reset-password").permitAll()
                 .requestMatchers("/users/verify/**").permitAll() // 允許忘記密碼驗證連結
                 .requestMatchers("/products").permitAll()
                 .requestMatchers("/categories").permitAll()
-                .requestMatchers("/upload/**").permitAll()
+                .requestMatchers(HttpMethod.GET,"/upload/**").permitAll()
                 .requestMatchers("/payments/**").permitAll()
                 .requestMatchers("/orders/*/status").permitAll()
                 .anyRequest().authenticated()
@@ -49,7 +51,7 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(Arrays.asList(allowedOrigins));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH"));
-        config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+        config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "ngrok-skip-browser-warning"));
         config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

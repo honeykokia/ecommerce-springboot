@@ -15,11 +15,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.demo.dto.ChangePasswordRequest;
 import com.example.demo.dto.ForgetPasswordRequest;
 import com.example.demo.dto.LoginRequest;
 import com.example.demo.dto.RegisterRequest;
 import com.example.demo.dto.ResendVerificationEmailRequest;
-import com.example.demo.dto.ChangePasswordRequest;
+import com.example.demo.dto.ResetPasswordRequest;
 import com.example.demo.dto.UpdateUserAvatarRequqst;
 import com.example.demo.dto.UpdateUserRequest;
 import com.example.demo.responses.ApiResponse;
@@ -108,11 +109,21 @@ public class UserController {
         return ResponseEntity.ok().body(response);
     }
 
-    @PostMapping("/forget-password")
+    @PostMapping("/forgot-password")
     public ResponseEntity<?> forgetPassword(@Valid @RequestBody ForgetPasswordRequest request, BindingResult result) {
 
         validationHelper.validateOrThrow(result);
         ApiResponse response = userService.forgetPassword(request);
+        return ResponseEntity.ok().body(response);
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(
+        @Valid @RequestBody ResetPasswordRequest request, 
+        BindingResult result) {
+
+        validationHelper.validateOrThrow(result);
+        ApiResponse response = userService.resetPassword(request);
         return ResponseEntity.ok().body(response);
     }
 

@@ -41,7 +41,7 @@ public class ProductBean {
     private Integer price;
     
     @Column(name = "image_url")
-    private String imageUrl;
+    private String imageURL;
     
     @Column(name = "in_stock", nullable = false)
     private Integer inStock;

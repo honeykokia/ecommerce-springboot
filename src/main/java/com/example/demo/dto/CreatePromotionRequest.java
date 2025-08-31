@@ -16,4 +16,5 @@ public class CreatePromotionRequest {
     private Boolean isActive;
     private LocalDate startDate;
     private LocalDate endDate;
+
 }

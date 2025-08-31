@@ -3,7 +3,6 @@ package com.example.demo.services;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,13 +11,14 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.bean.TokenBean;
 import com.example.demo.bean.UserBean;
+import com.example.demo.dto.ChangePasswordRequest;
 import com.example.demo.dto.ErrorInfo;
 import com.example.demo.dto.ForgetPasswordRequest;
 import com.example.demo.dto.LoginInfo;
 import com.example.demo.dto.LoginRequest;
 import com.example.demo.dto.RegisterRequest;
 import com.example.demo.dto.ResendVerificationEmailRequest;
-import com.example.demo.dto.ChangePasswordRequest;
+import com.example.demo.dto.ResetPasswordRequest;
 import com.example.demo.dto.UpdateUserAvatarRequqst;
 import com.example.demo.dto.UpdateUserRequest;
 import com.example.demo.dto.UserInfo;
@@ -89,6 +89,7 @@ public class UserService {
         LoginInfo loginInfo = new LoginInfo();
         loginInfo.setName(user.getName());
         loginInfo.setToken(token);
+        loginInfo.setRole(user.getRole());
         return new ApiResponse(Map.of("user",loginInfo));
     }
 
@@ -211,6 +212,40 @@ public class UserService {
         String verifyLink = frontendUrl[0] + "/reset-password?token=" + token;
 
         emailService.sendSimpleMail(user.getEmail(), "Ecommerce Reset Password", "您好，請點擊以下連結以重設您的密碼：\n" + verifyLink);
+
+        return new ApiResponse(null);
+    }
+
+    public ApiResponse resetPassword(ResetPasswordRequest request) {
+        Optional<TokenBean> tokenBeanOpt = tokenRepository.findByToken(request.getToken());
+        if (tokenBeanOpt.isEmpty() || tokenBeanOpt.get().getExpiresAt().isBefore(LocalDateTime.now())){
+            ErrorInfo errorInfo = new ErrorInfo();
+            errorInfo.addError("token", "Token is invalid or expired");
+            throw new ApiException("Invalid token", 400, errorInfo);
+        }
+
+        TokenBean tokenBean = tokenBeanOpt.get();
+
+        if (tokenBean.isUsed() || tokenBean.getTokenType() != TokenType.forgetPassword) {
+            ErrorInfo errorInfo = new ErrorInfo();
+            errorInfo.addError("token", "Token is invalid or expired");
+            throw new ApiException("Invalid token", 400, errorInfo);
+        }
+
+        if (!request.getNewPassword().equals(request.getConfirmPassword())) {
+            ErrorInfo errorInfo = new ErrorInfo();
+            errorInfo.addError("confirmPassword", "Passwords do not match");
+            throw new ApiException("Validation error", 400, errorInfo);
+        }
+
+        
+        UserBean user = tokenBean.getUser();
+        String encodedPassword = passwordEncoder.encode(request.getNewPassword());
+        user.setPassword(encodedPassword);
+        userRepository.save(user);
+
+        tokenBean.setUsed(true);
+        tokenRepository.save(tokenBean);
 
         return new ApiResponse(null);
     }

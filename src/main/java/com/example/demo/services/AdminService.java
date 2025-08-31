@@ -21,6 +21,8 @@ import com.example.demo.dto.CreatePromotionRequest;
 import com.example.demo.dto.CreateTagRequest;
 import com.example.demo.dto.ErrorInfo;
 import com.example.demo.dto.OrderInfo;
+import com.example.demo.dto.ProductInfo;
+import com.example.demo.dto.PromotionInfo;
 import com.example.demo.dto.TagInfo;
 import com.example.demo.dto.UpdateCategoryRequest;
 import com.example.demo.dto.UpdateOrderRequest;
@@ -76,6 +78,9 @@ public class AdminService {
     private EntityManager em;
 
     @Autowired
+    private ProductService productService;
+
+    @Autowired
     private UpdatePromotionImageValidator updatePromotionImageValidator;
 
     @Autowired
@@ -113,17 +118,23 @@ public class AdminService {
     public ApiResponse createProduct(CreateProductRequest createProductRequest) {
         ProductBean product = new ProductBean();
         product.setName(createProductRequest.getName());
-        product.setPrice(createProductRequest.getPrice());
-        product.setImageUrl(createProductRequest.getImageUrl());
+        product.setPrice(createProductRequest.getOriginalPrice());
+        product.setImageURL(createProductRequest.getImageURL());
         product.setInStock(createProductRequest.getInStock() != null ? createProductRequest.getInStock() : 0);
         product.setRating(createProductRequest.getRating() != null ? createProductRequest.getRating() : 0.0);
         product.setSoldCount(createProductRequest.getSoldCount() != null ? createProductRequest.getSoldCount() : 0);
         product.setShortDescription(createProductRequest.getShortDescription());
-        product.setCategory(em.getReference(CategoryBean.class, createProductRequest.getCategoryId()));
-        product.setPromotion(em.getReference(PromotionBean.class, createProductRequest.getPromotionId()));
-        
+        if (createProductRequest.getCategoryId() != null) {
+            product.setCategory(em.getReference(CategoryBean.class, createProductRequest.getCategoryId()));
+        }
+        if (createProductRequest.getPromotionId() != null) {
+            product.setPromotion(em.getReference(PromotionBean.class, createProductRequest.getPromotionId()));
+        }
+
         productRepository.save(product);
-        return new ApiResponse(null);
+
+        ProductInfo productInfo = productService.convertToProductInfo(product);
+        return new ApiResponse(Map.of("product", productInfo));
     }
 
     @Transactional
@@ -146,16 +157,16 @@ public class AdminService {
         if (updateProductRequest.getShortDescription() != null) product.setShortDescription(updateProductRequest.getShortDescription());
         if (updateProductRequest.getCategoryId() != null) product.setCategory(em.getReference(CategoryBean.class, updateProductRequest.getCategoryId()));
         if (updateProductRequest.getPromotionId() != null) product.setPromotion(em.getReference(PromotionBean.class, updateProductRequest.getPromotionId()));
-
         productRepository.save(product);
-        return new ApiResponse(Map.of("message", "Product updated successfully"));
+
+        return new ApiResponse(null);
     }
     
     @Transactional
     public ApiResponse updateProductImage(UpdateProductImageRequest request) {
         ProductBean product = updateProductImageValidator.validate(request);
         productRepository.save(product);
-        return new ApiResponse(Map.of("message", "Product image updated successfully"));
+        return new ApiResponse(Map.of("product", Map.of("imageURL", product.getImageURL())));
     }
 
 
@@ -246,13 +257,13 @@ public class AdminService {
         promotion.setDiscountType(createPromotionRequest.getDiscountType());
         promotion.setDiscountValue(createPromotionRequest.getDiscountValue());
         promotion.setDescription(createPromotionRequest.getDescription());
-        promotion.setImageUrl(createPromotionRequest.getImageUrl());
+        promotion.setImageURL(createPromotionRequest.getImageUrl());
         promotion.setIsActive(createPromotionRequest.getIsActive());
         promotion.setStartDate(createPromotionRequest.getStartDate());
         promotion.setEndDate(createPromotionRequest.getEndDate());
-
         promotionRepository.save(promotion);
-        return new ApiResponse(null);
+        PromotionInfo promotionInfo = convertToPromotionInfo(promotion);
+        return new ApiResponse(Map.of("promotion", promotionInfo));
     }
 
     @Transactional
@@ -283,16 +294,6 @@ public class AdminService {
         // promotionRepository.save(promotionBean);
         return new ApiResponse(null);
     }
-    @Transactional
-    public ApiResponse createCategory(CreateCategoryRequest createCategoryRequest) {
-        // Assuming you have a CategoryBean and CategoryRepository similar to Product and Promotion
-        CategoryBean category = new CategoryBean();
-        category.setName(createCategoryRequest.getName());
-        category.setDescription(createCategoryRequest.getDescription());
-
-        categoryRepository.save(category);
-        return new ApiResponse(null);
-    }
 
     @Transactional
     public ApiResponse deletePromotion(Long promotionId) {
@@ -312,7 +313,18 @@ public class AdminService {
     public ApiResponse updatePromotionImage(UpdatePromotionImageRequest request) {
         PromotionBean promotion = updatePromotionImageValidator.validate(request);
         promotionRepository.save(promotion);
-        return new ApiResponse(Map.of("message", "Promotion image updated successfully"));
+        return new ApiResponse(Map.of("promotion", Map.of("imageURL", promotion.getImageURL())));
+    }
+
+    @Transactional
+    public ApiResponse createCategory(CreateCategoryRequest createCategoryRequest) {
+        // Assuming you have a CategoryBean and CategoryRepository similar to Product and Promotion
+        CategoryBean category = new CategoryBean();
+        category.setName(createCategoryRequest.getName());
+        category.setDescription(createCategoryRequest.getDescription());
+
+        categoryRepository.save(category);
+        return new ApiResponse(null);
     }
 
     @Transactional
@@ -438,4 +450,19 @@ public class AdminService {
         orderInfo.setUpdatedAt(order.getUpdatedAt());
         return orderInfo;
     }
+
+    private PromotionInfo convertToPromotionInfo(PromotionBean promotion) {
+        PromotionInfo promotionInfo = new PromotionInfo();
+        promotionInfo.setId(promotion.getId());
+        promotionInfo.setName(promotion.getName());
+        promotionInfo.setDiscountType(promotion.getDiscountType());
+        promotionInfo.setDiscountValue(promotion.getDiscountValue());
+        promotionInfo.setDescription(promotion.getDescription());
+        promotionInfo.setImageURL(promotion.getImageURL());
+        promotionInfo.setIsActive(promotion.getIsActive());
+        promotionInfo.setStartDate(promotion.getStartDate());
+        promotionInfo.setEndDate(promotion.getEndDate());
+        return promotionInfo;
+    }
+
 }

@@ -41,7 +41,7 @@ public class PromotionBean {
     private String description;
     
     @Column(name = "image_url")
-    private String imageUrl;
+    private String imageURL;
     
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;

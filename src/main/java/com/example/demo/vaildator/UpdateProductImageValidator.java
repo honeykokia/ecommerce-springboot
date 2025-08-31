@@ -39,7 +39,7 @@ public class UpdateProductImageValidator implements CustValidator<UpdateProductI
 
         imageRules.check(target.getFile());
         String imageUrl = fileStorageService.storeFile(target.getFile());
-        product.setImageUrl(imageUrl);
+        product.setImageURL(imageUrl);
 
         return product;
     }

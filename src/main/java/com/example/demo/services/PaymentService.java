@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,7 +16,6 @@ import com.example.demo.pay.EcpaySigner;
 import com.example.demo.pay.PaymentParamsFactory;
 import com.example.demo.repository.OrderRepository;
 
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -83,7 +81,6 @@ public class PaymentService {
         for (String k : mv.keySet()) map.put(k, mv.getFirst(k));
         return map;
     }
-
 
     public String buildAutoPostHtml(String action, Map<String, String> fields) {
         StringBuilder sb = new StringBuilder();
