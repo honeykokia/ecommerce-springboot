@@ -16,7 +16,7 @@ public class JwtUtil {
     public static final SecretKey SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
     public static final long EXPIRATION_TIME = 1000 * 60 * 60;
 
-    public static String generateToken(String email,Long userId) {
+    public String generateToken(String email,Long userId) {
         return Jwts.builder()
                 .setSubject(email)
                 .claim("userId", userId)
@@ -31,7 +31,7 @@ public class JwtUtil {
      * @param token the JWT token
      * @return the user ID
      */
-    public static Claims extractClaims(String token) {
+    public Claims extractClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(SECRET_KEY)
                 .build()
