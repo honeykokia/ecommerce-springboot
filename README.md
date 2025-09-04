@@ -23,21 +23,6 @@
 
 ---
 
-## 📦 功能模組
-- **使用者模組**：註冊 / 登入 / 忘記密碼 / 個人資訊管理 / 購買紀錄  
-  - 技術重點：JWT 驗證、信箱驗證、BCrypt 密碼加密  
-- **商品模組**：商品列表 / 詳情 / 分類 / 搜尋  
-  - 技術重點：JPA 分頁查詢、動態搜尋條件  
-- **活動模組**：活動列表 / 詳情 / 分類  
-- **購物車模組**：加入 / 移除 / 修改商品、購物車清單  
-- **訂單模組**：建立訂單 / 訂單詳情 / 狀態追蹤  
-  - 技術重點：交易狀態機設計、避免併發衝突  
-- **支付模組**：整合綠界 ECPay  
-  - 技術重點：`CheckMacValue` 驗簽、callback / result 回調處理  
-- **管理後台模組**：商品 / 訂單 / 使用者 / 活動 / 類別管理  
-
----
-
 ## 🔧 環境變數設定
 請在專案根目錄建立 `.env` 檔案，並設定以下變數：
 
@@ -80,16 +65,3 @@ SPRING_ECPAY_RESULT_URL=<RESULT_URL>
    ```bash
    java -jar target/demo.jar
    ```
-
----
-
-## 📑 相關文件
-| 文件類型       | 位置                          |
-|----------------|-------------------------------|
-| API 規格       | [docs/api-spec.yaml](ecommerce-docs/docs/api-spec.yaml) |
-| 資料庫 Schema  | [docs/database-schema.sql](ecommerce-docs/docs/database-schema.sql) |
-| ER 圖          | [docs/er-diagram.puml](ecommerce-docs/docs/er-diagram.puml) |
-| 功能模組       | [docs/feature-modules.yaml](ecommerce-docs/docs/feature-modules.yaml) |
-| 用例圖         | [docs/feature-usecase.puml](ecommerce-docs/docs/feature-usecase.puml) |
-
----
