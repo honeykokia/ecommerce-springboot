@@ -37,7 +37,6 @@ public class UserController {
 
     @Autowired
     private VaildationHelper validationHelper;
-
     @Autowired
     private UserService userService;
 
@@ -70,7 +69,6 @@ public class UserController {
         ApiResponse response = userService.register(registerRequest);
         return ResponseEntity.ok().body(response);
     }
-
     @GetMapping("/me")
     public ResponseEntity<?> getProfile(@AuthenticationPrincipal Long userId) {
 

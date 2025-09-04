@@ -74,7 +74,6 @@ public class OrderBean {
     @Enumerated(EnumType.STRING)
     @Column(name = "shipping_status", nullable = false)
     private ShippingStatus shippingStatus;
-
     @Column(name = "created_at")
     private LocalDateTime createdAt;
     
