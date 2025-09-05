@@ -33,6 +33,11 @@ public class ProductService {
 
     @Transactional
     public ApiResponse getProducts(String name, Long categoryId) {
+
+        if (name != null) {
+            name = name.toLowerCase();
+        }
+
         List<ProductBean> products = productRepository.findProductsWithFilters(name, categoryId);
         // products = calculateDiscountedPrices(products);
         List<ProductInfo> productInfoList = products.stream()
